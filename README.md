@@ -1,4 +1,4 @@
-# chokchok — AI 멀티에이전트 장애 분석 (AIOps)
+# chok-v2 — AI 멀티에이전트 장애 분석
 
 > 프로덕션: https://chokchok-sigma.vercel.app
 
