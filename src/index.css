@@ -1,0 +1,223 @@
+@import "tailwindcss";
+@import "./styles/shared.css";
+
+/* ═══════════ Design tokens (ported from prototype) ═══════════ */
+:root {
+  --surface: #ffffff;
+  --bg2: #f2f5f7;
+  --bg3: #edf8f5;
+  --toggle-bg: #eaf6f3;
+  --border: #dde4ea;
+  --border2: #edf1f5;
+  --text1: #0f172a;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --text4: #374151;
+  --chip-error: #fee2e2;
+  --chip-warn: #ffedd5;
+  --chip-success: #dcfce7;
+  --chip-info: #e6faf7;
+  --chip-blue: #dbeafe;
+  --chip-amber: #fef3c7;
+  --err-surface: #fff5f5;
+  --warn-surface: #fffbeb;
+  --ok-surface: #f0fdf4;
+  --brand: #00c9a7;
+  --err-text: #ef4444;
+  --ok-text: #16a34a;
+  --warn-text: #ea580c;
+  --warn-text2: #92400e;
+  --btn-ok-bg: #22c55e;
+  --btn-ok-fg: #fff;
+  --btn-ok-border: transparent;
+  --btn-err-bg: #ef4444;
+  --btn-err-fg: #fff;
+  --btn-err-border: transparent;
+  --chip-error-text: #ef4444;
+  --chip-success-text: #16a34a;
+  --chip-warn-text: #ea580c;
+  --chip-info-text: #00a896;
+  --chip-low-text: #16a34a;
+  --neutral-tag: #f1f5f9;
+  --neutral-tag-text: #374151;
+  --input-bg: var(--surface);
+  --border2-strong: var(--border);
+  --navy: #2d3a8c;
+  --navy-node: #2d3a8c;
+}
+
+[data-dark] {
+  --surface: #161c24;
+  --bg2: #0f1318;
+  --bg3: #131920;
+  --border: #222c38;
+  --border2: #161c24;
+  --text1: #c9d1d9;
+  --text2: #6e7f8d;
+  --text3: #4a5e72;
+  --text4: #8a9baa;
+  --chip-error: rgba(220, 60, 60, 0.14);
+  --chip-warn: rgba(210, 130, 30, 0.1);
+  --chip-success: rgba(40, 160, 100, 0.12);
+  --chip-info: rgba(0, 180, 148, 0.12);
+  --chip-blue: rgba(60, 120, 200, 0.12);
+  --chip-amber: rgba(200, 140, 30, 0.1);
+  --err-surface: rgba(200, 50, 50, 0.09);
+  --warn-surface: rgba(190, 120, 20, 0.08);
+  --ok-surface: rgba(30, 150, 90, 0.08);
+  --toggle-bg: #182220;
+  --brand: #20c997;
+  --err-text: #e06c6c;
+  --ok-text: #3fb950;
+  --warn-text: #d29922;
+  --warn-text2: #d29922;
+  --btn-ok-bg: rgba(30, 150, 90, 0.16);
+  --btn-ok-fg: #3fb950;
+  --btn-ok-border: rgba(40, 160, 100, 0.32);
+  --btn-err-bg: rgba(180, 45, 45, 0.16);
+  --btn-err-fg: #e06c6c;
+  --btn-err-border: rgba(220, 60, 60, 0.32);
+  --chip-error-text: #e06c6c;
+  --chip-success-text: #3fb950;
+  --chip-warn-text: #d29922;
+  --chip-info-text: #20c997;
+  --chip-low-text: #3fb950;
+  --neutral-tag: #1a2030;
+  --neutral-tag-text: #6e7f8d;
+  --input-bg: #1e2633;
+  --border2-strong: #2e3d50;
+  --navy: #818cf8;
+  --navy-node: #818cf8;
+}
+
+/* Design token → Tailwind utility 매핑 */
+@theme inline {
+  /* 배경 */
+  --color-surface: var(--surface);
+  --color-bg2: var(--bg2);
+  --color-bg3: var(--bg3);
+  --color-toggle-bg: var(--toggle-bg);
+  --color-input-bg: var(--input-bg);
+
+  /* 브랜드 */
+  --color-brand: var(--brand);
+
+  /* 텍스트 */
+  --color-text1: var(--text1);
+  --color-text2: var(--text2);
+  --color-text3: var(--text3);
+  --color-text4: var(--text4);
+
+  /* 테두리 */
+  --color-border: var(--border);
+  --color-border2: var(--border2);
+  --color-border2-strong: var(--border2-strong);
+
+  /* 칩 배경 */
+  --color-chip-error: var(--chip-error);
+  --color-chip-warn: var(--chip-warn);
+  --color-chip-success: var(--chip-success);
+  --color-chip-info: var(--chip-info);
+  --color-chip-blue: var(--chip-blue);
+  --color-chip-amber: var(--chip-amber);
+
+  /* 상태 서피스 */
+  --color-err-surface: var(--err-surface);
+  --color-warn-surface: var(--warn-surface);
+  --color-ok-surface: var(--ok-surface);
+
+  /* 상태 텍스트 */
+  --color-err-text: var(--err-text);
+  --color-ok-text: var(--ok-text);
+  --color-warn-text: var(--warn-text);
+  --color-warn-text2: var(--warn-text2);
+
+  /* 버튼 */
+  --color-btn-ok-bg: var(--btn-ok-bg);
+  --color-btn-ok-fg: var(--btn-ok-fg);
+  --color-btn-err-bg: var(--btn-err-bg);
+  --color-btn-err-fg: var(--btn-err-fg);
+
+  /* 중립 태그 */
+  --color-neutral-tag: var(--neutral-tag);
+  --color-neutral-tag-text: var(--neutral-tag-text);
+
+  /* 폰트 */
+  --font-display: "Manrope", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg2);
+  color: var(--text1);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.screen {
+  animation: fadeIn 0.18s ease;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+a {
+  cursor: pointer;
+}
+
+[data-dark] ::placeholder {
+  color: var(--text3);
+}
+
+[data-dark] select,
+[data-dark] input {
+  color-scheme: dark;
+}
+
+/* the prototype swapped this navy fill in dark mode */
+[data-dark] [fill="#2D3A8C"] {
+  fill: #818cf8;
+}
+[data-dark] [stroke="#2D3A8C"] {
+  stroke: #818cf8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  .screen {
+    animation: none !important;
+    transition: none !important;
+  }
+}

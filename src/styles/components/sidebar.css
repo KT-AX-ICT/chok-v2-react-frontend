@@ -1,0 +1,132 @@
+/* ── 사이드바 ── */
+.sidebar {
+  width: 210px;
+  flex-shrink: 0;
+  background: var(--bg3);
+  border-right: 1.5px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+.sidebar__logo {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  padding: 0 18px;
+  flex-shrink: 0;
+}
+.sidebar__nav {
+  flex: 1;
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.sidebar__nav-item {
+  padding: 9px 12px;
+  background: transparent;
+  color: var(--text2);
+  border-radius: 7px;
+  font: 600 13px system-ui;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.sidebar__nav-item--active {
+  background: var(--brand);
+  color: #fff;
+  font-weight: 700;
+}
+.sidebar__pipeline {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar__pipeline-label {
+  font: 600 10px system-ui;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 10px;
+}
+.sidebar__pipeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.sidebar__pipeline-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font: 12px system-ui;
+  color: var(--text4);
+}
+.sidebar__pipeline-dot {
+  width: 7px;
+  height: 7px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.sidebar__user {
+  padding: 12px 14px 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.sidebar__avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--brand);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 13px system-ui;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sidebar__user-info {
+  min-width: 0;
+}
+.sidebar__user-name {
+  font: 600 12px system-ui;
+  color: var(--text1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar__user-email {
+  font: 11px system-ui;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sidebar__logout {
+  margin-left: auto;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* ── 헤더 ── */
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 24px;
+  height: 68px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}

@@ -1,0 +1,75 @@
+/* ════════════════════════════════════════════════
+   공통 컴포넌트 스타일 — Tailwind @apply 기반
+   페이지·컴포넌트를 가리지 않고 어디서든 사용
+   ════════════════════════════════════════════════ */
+
+@layer components {
+
+  /* ── 심각도 뱃지 ── */
+  .sev-badge {
+    @apply inline-block px-[9px] py-[3px] rounded text-[11px] font-extrabold;
+  }
+
+  /* ── 상태 뱃지 ── */
+  .status-badge {
+    @apply inline-flex items-center gap-1 px-[9px] py-[3px] rounded text-[11px] font-bold;
+  }
+
+  /* ── 신호 칩 (필터·태그·감지 신호) ── */
+  .chip {
+    @apply inline-block px-3 py-[5px] bg-bg3 border border-border rounded-full text-xs text-text4 whitespace-nowrap;
+  }
+
+  /* ── 서비스 태그 ── */
+  .tag {
+    @apply inline-block px-[11px] py-1 rounded text-xs;
+  }
+  .tag--error {
+    @apply bg-chip-error text-err-text font-bold;
+  }
+  .tag--neutral {
+    @apply bg-neutral-tag text-neutral-tag-text font-semibold;
+  }
+
+  /* ── 섹션 레이블 (대문자 소형 헤더) ── */
+  .section-label {
+    @apply text-[11px] font-bold text-text2 uppercase tracking-[.06em] mb-[10px];
+  }
+
+  /* ── 섹션 헤더 (accent bar + 레이블) ── */
+  .section-header {
+    @apply flex items-center gap-[6px] mb-3;
+  }
+  .section-header__accent {
+    @apply w-[3px] h-[14px] bg-brand rounded-sm shrink-0;
+  }
+  .section-header__label {
+    @apply text-[12px] font-bold text-brand uppercase tracking-[.06em];
+  }
+
+  /* ── 카드 패널 (공통 border+radius 박스) ── */
+  .card {
+    @apply bg-surface border border-border rounded-[9px];
+  }
+  .card--warn {
+    @apply bg-warn-surface border-[1.5px] border-[rgb(245_158_11)] rounded-[9px];
+  }
+  .card--info {
+    @apply bg-bg2 border border-border rounded-[9px];
+  }
+
+  /* ── 일반 버튼 ── */
+  .btn-primary {
+    @apply w-full py-[14px] bg-brand text-white border-none rounded-lg text-base font-bold flex items-center justify-center gap-[10px] cursor-pointer;
+  }
+  .btn-primary:disabled {
+    @apply opacity-70 cursor-not-allowed;
+  }
+  .btn-ok {
+    @apply inline-flex items-center gap-[6px] px-5 py-2 bg-btn-ok-bg text-btn-ok-fg border border-btn-ok-bg rounded-[6px] text-[13px] font-bold cursor-pointer;
+  }
+  .btn-err {
+    @apply inline-flex items-center gap-[6px] px-5 py-2 bg-btn-err-bg text-btn-err-fg border border-btn-err-bg rounded-[6px] text-[13px] font-bold cursor-pointer;
+  }
+
+}

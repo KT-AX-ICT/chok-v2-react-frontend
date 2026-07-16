@@ -1,0 +1,19 @@
+/node_modules
+dist
+dist-ssr
+*.local
+.env
+.env.*
+.DS_Store
+.vercel
+.idea
+*.tsbuildinfo
+
+# secrets / credentials / keys
+*.key
+*.pem
+*.p12
+*.pfx
+*secret*
+*credential*
+*private*

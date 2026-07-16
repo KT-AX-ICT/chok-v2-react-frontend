@@ -1,0 +1,357 @@
+/* ── 페이지 ── */
+.landing-page {
+  min-height: 100vh;
+  background: var(--surface);
+  overflow-y: auto;
+  height: 100vh;
+}
+
+/* ── 네비게이션 ── */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 68px;
+  border-bottom: 1.5px solid var(--border);
+  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.landing-nav__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.landing-nav__cta {
+  padding: 8px 22px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  font: 700 14px system-ui;
+  cursor: pointer;
+}
+
+/* ── 히어로 ── */
+.landing-hero {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 56px;
+  padding: 72px 64px 64px;
+  background: var(--surface);
+  align-items: center;
+}
+.landing-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px;
+  background: var(--chip-info);
+  color: var(--brand);
+  border: 1px solid rgba(0, 201, 167, 0.35);
+  border-radius: 20px;
+  font: 700 12px system-ui;
+  margin-bottom: 28px;
+}
+.landing-hero__title {
+  font: 800 40px/1.32 system-ui;
+  color: var(--text1);
+  margin: 0 0 22px;
+  letter-spacing: -.04em;
+}
+.landing-hero__accent {
+  color: var(--brand);
+}
+.landing-hero__desc {
+  font: 400 16px/1.8 system-ui;
+  color: var(--text2);
+  margin: 0 0 36px;
+}
+.landing-hero__cta {
+  padding: 14px 32px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font: 700 17px system-ui;
+  cursor: pointer;
+}
+.landing-hero__card {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 4px 20px rgba(0, 201, 167, .09);
+}
+
+/* ── 공통 섹션 레이아웃 ── */
+.landing-section {
+  padding: 60px 64px;
+  border-top: 1px solid var(--border);
+}
+.landing-section--alt {
+  background: var(--bg2);
+}
+.landing-section__header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.landing-section__title {
+  font: 800 26px system-ui;
+  color: var(--text1);
+  margin: 0 0 8px;
+  letter-spacing: -.03em;
+}
+.landing-section__desc {
+  font: 14px system-ui;
+  color: var(--text2);
+  margin: 0;
+}
+.landing-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+}
+
+/* ── 문제 카드 ── */
+.landing-problem-card {
+  background: var(--surface);
+  border: 1.5px solid #fecaca;
+  border-radius: 10px;
+  padding: 26px;
+}
+.landing-problem-card__icon {
+  width: 38px;
+  height: 38px;
+  background: var(--chip-error);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  margin-bottom: 14px;
+}
+.landing-problem-card__title {
+  font: 700 15px system-ui;
+  color: var(--text1);
+  margin-bottom: 8px;
+}
+.landing-problem-card__body {
+  font: 13px/1.65 system-ui;
+  color: var(--text2);
+}
+
+/* ── 히어로 카드 내부 ── */
+.landing-hero-card__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.landing-hero-card__badge-high {
+  padding: 3px 9px;
+  background: var(--chip-error);
+  color: var(--chip-error-text);
+  border-radius: 4px;
+  font: 800 11px system-ui;
+}
+.landing-hero-card__type {
+  font: 700 14px system-ui;
+  color: var(--text1);
+}
+.landing-hero-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  background: #fff7ed;
+  color: #f97316;
+  border-radius: 4px;
+  font: 700 11px system-ui;
+  margin-left: auto;
+}
+.landing-hero-card__service {
+  font: 700 15px system-ui;
+  color: var(--text1);
+  margin-bottom: 3px;
+}
+.landing-hero-card__time {
+  font: 12px system-ui;
+  color: var(--text3);
+  margin-bottom: 18px;
+}
+.landing-hero-card__signals {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-bottom: 14px;
+}
+.landing-hero-card__signal-label {
+  font: 700 10px system-ui;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 8px;
+}
+.landing-hero-card__signal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.landing-hero-card__signal-item {
+  font: 12px ui-monospace, monospace;
+  color: var(--text4);
+  background: var(--bg3);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+.landing-hero-card__tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+/* ── 기능 소개 카드 ── */
+.landing-feature-card {
+  border: 1.5px solid rgba(0, 201, 167, 0.35);
+  border-radius: 10px;
+  padding: 28px;
+}
+.landing-feature-card__icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(0, 201, 167, 0.12);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 20px system-ui;
+  color: var(--brand);
+  margin-bottom: 16px;
+}
+.landing-feature-card__title {
+  font: 700 15px system-ui;
+  color: var(--text1);
+  margin-bottom: 8px;
+}
+.landing-feature-card__body {
+  font: 13px/1.65 system-ui;
+  color: var(--text2);
+}
+
+/* ── 동작 흐름 ── */
+.landing-flow {
+  display: flex;
+  align-items: center;
+}
+.landing-flow-step {
+  flex: 1;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 22px 16px;
+  text-align: center;
+}
+.landing-flow-step--accent {
+  border-color: var(--brand);
+}
+.landing-flow-step__num {
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 201, 167, 0.12);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 14px system-ui;
+  color: var(--brand);
+  margin-bottom: 12px;
+}
+.landing-flow-step__num--accent {
+  background: var(--brand);
+  color: #fff;
+}
+.landing-flow-step__title {
+  font: 700 14px system-ui;
+  color: var(--text1);
+  margin-bottom: 6px;
+}
+.landing-flow-step__title--accent {
+  color: var(--brand);
+}
+.landing-flow-step__body {
+  font: 12px/1.5 system-ui;
+  color: var(--text2);
+  white-space: pre-line;
+}
+.landing-flow-arrow {
+  font: 700 24px system-ui;
+  color: var(--brand);
+  padding: 0 14px;
+  flex-shrink: 0;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 900px) {
+  .landing-hero {
+    grid-template-columns: 1fr;
+    padding: 48px 28px 40px;
+    gap: 32px;
+  }
+  .landing-hero__card {
+    max-width: 480px;
+  }
+  .landing-section {
+    padding: 44px 28px;
+  }
+  .landing-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .landing-flow {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .landing-flow-arrow {
+    transform: rotate(90deg);
+    text-align: center;
+    padding: 0;
+  }
+  .landing-nav {
+    padding: 0 20px;
+  }
+  .landing-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 28px 24px;
+  }
+}
+
+/* ── 푸터 ── */
+.landing-footer {
+  background: #0f172a;
+  padding: 36px 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.landing-footer__brand {
+  font: 800 20px/1 'Manrope', system-ui, sans-serif;
+  color: #f1f5f9;
+  letter-spacing: -.5px;
+  margin-bottom: 8px;
+}
+.landing-footer__desc {
+  font: 13px system-ui;
+  color: var(--text3);
+}
+.landing-footer__link {
+  padding: 8px 18px;
+  border: 1px solid #475569;
+  border-radius: 6px;
+  color: var(--text3);
+  text-decoration: none;
+  font: 14px system-ui;
+}

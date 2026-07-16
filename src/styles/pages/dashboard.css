@@ -1,0 +1,111 @@
+/* ── 페이지 레이아웃 ── */
+.dashboard-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.dashboard-page__title {
+  font: 700 18px system-ui;
+  color: var(--text1);
+  letter-spacing: -.02em;
+}
+
+/* ── KPI 카드 ── */
+.dashboard-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* HITL 카드 주석 처리로 4→3칸 (복원 시 4로 되돌릴 것) */
+  gap: 12px;
+}
+.dashboard-kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.dashboard-kpi-card__label {
+  font: 11px system-ui;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 6px;
+}
+.dashboard-kpi-card__value {
+  font: 800 26px system-ui;
+}
+
+/* ── HITL 알림 ── */
+.dashboard-hitl-alert {
+  background: var(--err-surface);
+  border: 1.5px solid #ea580c;
+  border-radius: 9px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dashboard-hitl-alert__text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 13px system-ui;
+  color: #c2410c;
+}
+.dashboard-hitl-alert__btn {
+  padding: 6px 16px;
+  background: #ea580c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font: 700 12px system-ui;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ── 최근 리포트 ── */
+.dashboard-recent {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.dashboard-recent__header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dashboard-recent__title {
+  font: 700 13px system-ui;
+  color: var(--text1);
+}
+.dashboard-recent__all {
+  font: 600 12px system-ui;
+  color: var(--brand);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.dashboard-report-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  cursor: pointer;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+}
+.dashboard-report-row__type {
+  font: 600 12px system-ui;
+  color: var(--text1);
+  flex: 1;
+}
+.dashboard-report-row__time {
+  font: 11px system-ui;
+  color: var(--text3);
+  flex-shrink: 0;
+}

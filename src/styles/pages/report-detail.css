@@ -1,0 +1,588 @@
+/* ── 페이지 레이아웃 ── */
+.detail-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.detail-breadcrumb {
+  font: 12px system-ui;
+  color: var(--text3);
+}
+.detail-breadcrumb :is(a) {
+  color: var(--brand);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* ── 헤더 ── */
+.detail-header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.detail-header-meta__timestamp {
+  font: 12px system-ui;
+  color: var(--text3);
+}
+.detail-title-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.detail-title {
+  font: 800 22px system-ui;
+  color: var(--text1);
+  margin: 0;
+  letter-spacing: -.03em;
+}
+.detail-confidence {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 2px;
+}
+.detail-confidence__label {
+  font: 11px system-ui;
+  color: var(--text3);
+}
+.detail-confidence__value {
+  font: 800 15px system-ui;
+}
+
+/* ── HITL 패널 ── */
+.detail-hitl {
+  background: var(--warn-surface);
+  border: 1.5px solid rgba(245, 158, 11, 1);
+  border-radius: 9px;
+  padding: 16px 20px;
+}
+.detail-hitl__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 13px system-ui;
+  color: var(--warn-text2);
+  margin-bottom: 12px;
+}
+.detail-hitl__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.detail-hitl__textarea {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid #fde68a;
+  border-radius: 6px;
+  font: 13px system-ui;
+  resize: vertical;
+  min-height: 48px;
+  background: var(--surface);
+  color: var(--text4);
+}
+.detail-hitl__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* ── RCA 결론 블록 ── */
+.detail-rca {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 9px;
+  padding: 16px 20px;
+}
+.detail-rca__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.detail-rca__row {
+  display: flex;
+  gap: 10px;
+}
+.detail-rca__key {
+  flex-shrink: 0;
+  font: 700 11px system-ui;
+  color: var(--text3);
+  padding-top: 2px;
+  width: 56px;
+}
+.detail-rca__rootcause {
+  font: 700 14px/1.5 system-ui;
+  color: var(--text1);
+}
+.detail-rca__propagation {
+  font: 13px/1.6 system-ui;
+  color: var(--text4);
+}
+
+
+/* ── 탭 ── */
+.detail-tabs {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 9px 9px 0 0;
+  border-bottom: none;
+}
+.detail-tab {
+  padding: 11px 22px;
+  font: 600 13px system-ui;
+  color: var(--text2);
+  background: none;
+  border: none;
+  border-bottom: 2.5px solid transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.detail-tab--active {
+  font-weight: 700;
+  color: var(--brand);
+  border-bottom-color: var(--brand);
+  margin-bottom: -1px;
+}
+.detail-panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0 0 9px 9px;
+  padding: 20px;
+  margin-top: -1px;
+}
+
+/* ── 서브탭 (원인) ── */
+.detail-sub-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.detail-sub-tab {
+  padding: 8px 18px;
+  font: 500 12px system-ui;
+  color: var(--text3);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+.detail-sub-tab--active {
+  font-weight: 700;
+  color: var(--text1);
+  border-bottom-color: var(--text1);
+}
+
+/* ── 에이전트 로그 탭 ── */
+.detail-agent-log {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.detail-agent-log__row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 7px 0;
+}
+.detail-agent-log__time {
+  flex-shrink: 0;
+  font: 12px ui-monospace, monospace;
+  color: var(--text3);
+  width: 52px;
+}
+.detail-agent-log__agent {
+  flex-shrink: 0;
+  width: 108px;
+  font: 700 12px system-ui;
+}
+.detail-agent-log__action {
+  font: 12px system-ui;
+  color: var(--text4);
+}
+
+
+/* ── 요약 탭 ── */
+.detail-summary-highlight {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font: 700 14px/1.7 system-ui;
+  color: var(--text1);
+  margin-bottom: 16px;
+}
+.detail-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.detail-service-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── 원인 탭 ── */
+.detail-cause-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.detail-cause-item {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+}
+.detail-cause-item__label {
+  flex-shrink: 0;
+  font: 700 11px system-ui;
+  color: var(--text3);
+  width: 88px;
+  white-space: nowrap;
+}
+.detail-cause-item__value {
+  font: 400 13px/1.5 system-ui;
+  color: var(--text4);
+}
+.detail-cause-item__value--highlight {
+  font-weight: 700;
+  color: var(--text1);
+}
+.detail-snapshot-label {
+  font: 700 11px system-ui;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+.detail-snapshot {
+  background: var(--bg3);
+  border-radius: 7px;
+  padding: 12px 14px;
+  font: 12px/1.85 ui-monospace, monospace;
+  color: var(--text4);
+  display: flex;
+  flex-direction: column;
+}
+.detail-snapshot__line {
+  margin: 0 -14px;
+  padding: 1px 14px;
+}
+.detail-snapshot__line--error {
+  background: var(--chip-error);
+  color: #ef4444;
+}
+.detail-snapshot__line--warn {
+  background: var(--chip-amber);
+  color: #92400e;
+}
+
+/* ── 영향 탭 ── */
+.detail-impact-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.detail-impact-metric {
+  background: var(--err-surface);
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+}
+.detail-impact-metric__label {
+  font: 11px system-ui;
+  color: var(--text2);
+  margin-bottom: 6px;
+}
+.detail-impact-metric__value {
+  font: 800 24px system-ui;
+  color: #ef4444;
+}
+.detail-impact-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 13px system-ui;
+}
+.detail-impact-th {
+  padding: 9px 14px;
+  text-align: left;
+  font: 700 11px system-ui;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  background: var(--bg2);
+}
+.detail-impact-td {
+  padding: 10px 14px;
+}
+.detail-impact-td--service {
+  color: var(--text1);
+  font-weight: 600;
+}
+.detail-impact-td--errors {
+  color: #ef4444;
+  font-weight: 700;
+}
+.detail-impact-td--type {
+  color: var(--text2);
+}
+.detail-impact-row {
+  border-bottom: 1px solid var(--border2);
+}
+.detail-impact-row:last-child {
+  border-bottom: none;
+}
+
+/* ── 시각화 탭 ── */
+.viz-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.viz-section__title {
+  font: 700 13px system-ui;
+  color: var(--text1);
+  margin-bottom: 12px;
+}
+.viz-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+.viz-card--pad20 {
+  padding: 20px;
+}
+.viz-ticks {
+  display: flex;
+  margin-left: 116px;
+  margin-bottom: 6px;
+}
+.viz-ticks--heat {
+  margin-bottom: 5px;
+  margin-left: 116px;
+}
+.viz-tick {
+  flex: 1;
+  font: 10px system-ui;
+  color: var(--text3);
+}
+.viz-tick--active {
+  font-weight: 700;
+  color: var(--text2);
+}
+.viz-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.viz-rows--heat {
+  gap: 4px;
+}
+.viz-row {
+  display: flex;
+  align-items: center;
+}
+.viz-label {
+  width: 116px;
+  font: 400 11px system-ui;
+  color: var(--text4);
+  flex-shrink: 0;
+}
+.viz-label--bold {
+  font-weight: 700;
+}
+.viz-label--error {
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.viz-bar {
+  flex: 1;
+  height: 22px;
+  background: var(--bg2);
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.viz-bar--error {
+  background: var(--chip-error);
+  border: 1.5px solid #fca5a5;
+}
+.viz-bar__fill {
+  position: absolute;
+  height: 100%;
+  background: var(--chip-error);
+}
+.viz-bar__tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #ef4444;
+}
+.viz-bar__badge {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font: 700 10px system-ui;
+  color: #ef4444;
+}
+.viz-bar__event {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  border: 1.5px solid #fff;
+  cursor: default;
+}
+.viz-bar__event--log {
+  background: #ef4444;
+}
+.viz-bar__event--trace {
+  background: #3b82f6;
+}
+.viz-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+}
+.viz-legend__item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font: 11px system-ui;
+  color: var(--text2);
+}
+.viz-legend__swatch {
+  width: 12px;
+  height: 10px;
+  border-radius: 2px;
+  display: inline-block;
+  background: var(--chip-error);
+}
+.viz-graph-wrap {
+  height: 260px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg2);
+}
+.viz-graph-wrap .react-flow__background {
+  background: var(--bg2);
+}
+.viz-graph-wrap .react-flow__pane {
+  cursor: default;
+}
+.viz-heat-grid {
+  flex: 1;
+  display: grid;
+  /* grid-template-columns은 VizTab에서 동적으로 주입 */
+  gap: 4px;
+}
+.viz-heat-cell {
+  height: 22px;
+  border-radius: 3px;
+}
+.viz-heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.viz-heat-legend__swatch {
+  width: 16px;
+  height: 11px;
+  border-radius: 2px;
+}
+.viz-heat-legend__label {
+  font: 10px system-ui;
+  color: var(--text3);
+}
+
+/* ── 에러 상태 (404, 구현만 해두고 미연결) ── */
+.detail-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 24px;
+  text-align: center;
+}
+.detail-error__icon {
+  color: #ef4444;
+}
+.detail-error__title {
+  font: 800 17px system-ui;
+  color: var(--text1);
+}
+.detail-error__desc {
+  font: 13px system-ui;
+  color: var(--text3);
+}
+.detail-error__btn {
+  margin-top: 8px;
+  padding: 10px 20px;
+  background: var(--brand);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font: 700 13px system-ui;
+  cursor: pointer;
+}
+
+/* ── 조치 탭 ── */
+.detail-action-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.detail-action-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.detail-action-step__num {
+  width: 26px;
+  height: 26px;
+  background: var(--brand);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font: 800 12px system-ui;
+  color: #fff;
+  flex-shrink: 0;
+}
+.detail-action-step__text {
+  font: 13px/1.65 system-ui;
+  color: var(--text1);
+  padding-top: 4px;
+}
+.detail-action-recovery {
+  background: var(--err-surface);
+  border: 1px solid #fecaca;
+  border-radius: 7px;
+  padding: 10px 16px;
+  font: 13px system-ui;
+  color: #ef4444;
+}
