@@ -39,27 +39,40 @@ npm run preview
 { "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }
 ```
 
-## 백엔드 연결
+## 백엔드 연결 / 로컬 E2E
 
-`.env.local`에 아래 값을 설정합니다.
+`.env.local`(git 미추적)에 아래 값을 설정합니다.
 
 ```
 VITE_API_BASE_URL=http://localhost:8080
-VITE_USE_MOCK=true   # true = mock 폴백 / false 또는 미설정 = 실 API
+VITE_USE_MOCK=false   # 실 API 호출. true = API 실패 시 mock 데이터로 폴백
 ```
+
+> `VITE_USE_MOCK`은 "mock/실서버" 하드 스위치가 아니라 **실패 시 mock 폴백** 스위치입니다.
+> 코드는 항상 실 API를 먼저 호출하고, `true`일 때만 호출 실패 시 mock으로 폴백합니다.
+> (Spring이 켜져 있으면 `true`여도 실 데이터를 씀)
+
+**로컬 E2E — 프론트 ↔ Spring 직접 연결**
+1. Spring 백엔드를 `localhost:8080`에 기동
+2. `VITE_USE_MOCK=false`
+3. 프론트를 `localhost:5173`으로 실행 (`npm run dev`) — Spring CORS가 `5173`을 허용하므로 그대로 연결됨
+
+**mock 데이터로 개발 — 백엔드 없이**
+- `VITE_USE_MOCK=true` + Spring 미기동 → API 실패 시 mock 데이터로 폴백
 
 **Spring 기대 엔드포인트**
 
 | Method | Path | 화면 |
 |--------|------|------|
 | GET | `/api/dashboard` | 대시보드 (집계 + 최근 리포트) |
-| GET | `/api/reports` | 리포트 목록 |
-| GET | `/api/reports/{id}` | 리포트 상세 |
+| GET | `/api/reports` | 리포트 목록 (`page`·`size`·`severity`·`from`·`to`·`search`·`sort`) |
+| GET | `/api/reports/{id}` | 리포트 상세 (`{report, counts, detail}` 봉투) |
 
-Spring 백엔드 연결 시 `severity` 필드는 `HIGH/MID/LOW` 문자열로 반환되며, 프론트에서 소문자로 매핑합니다.
+- `severity`는 `HIGH/MID/LOW` 문자열로 반환되며 프론트도 동일 대문자로 사용. 판정 전이면 `null` 가능.
+- 없는/미완료(DONE 아님) id는 `404 {error:{code:"REPORT_NOT_FOUND"}}` → 프론트 NotFound 화면으로 연결.
+- 시각은 UTC `yyyy-MM-dd HH:mm:ss`로 내려오며 프론트가 KST로 변환해 표시.
 
-> **목 데이터 폴백:** `VITE_USE_MOCK=true`일 때 API 실패 시 mock 데이터로 폴백합니다.
-> 실 API 연결 후에는 `VITE_USE_MOCK=false`로 변경하거나 제거하세요.
+**배포 연결:** 현재 Vercel은 mock으로 동작. 실 연동은 Spring 공개 URL 확정 후 결정(같은 도메인 `/api` proxy 또는 별도 도메인 + CORS).
 
 ## 구조
 
@@ -119,7 +132,7 @@ src/
 │     ├─ AgentLogTab.tsx
 │     ├─ VizTab.tsx               # 시각화 탭 — 현재 주석 처리 (히트맵 방식으로 재설계 예정)
 │     ├─ DependencyGraph.tsx      # React Flow + dagre 서비스 의존성 그래프
-│     └─ NotFound.tsx             # 404 에러 화면 — 구현만 해두고 미연결 (REPORT_NOT_FOUND 연동 후 사용 예정)
+│     └─ NotFound.tsx             # 404 에러 화면 — REPORT_NOT_FOUND(없는/미완료 id) 응답 시 표시 (index.tsx catch에서 연결됨)
 │
 ├─ utils/
 │  ├─ dateUtils.ts                # toLocalDateStr — Date → "YYYY-MM-DD" 로컬 날짜 변환
@@ -165,15 +178,18 @@ src/
 | 사이드바 유저 정보·로그아웃 | `src/components/layout/Sidebar.tsx` | TODO 주석 해제 |
 | 대시보드 HITL KPI·알림 배너 | `src/pages/Dashboard/index.tsx` | HITL 확장 방향 확정 후 TODO 주석 해제 (ReportDetail HITL 패널과 함께) |
 | 시각화 탭 (FR-S-05) | `src/pages/ReportDetail/VizTab.tsx` | 히트맵 재설계 후 TODO 주석 해제 |
-| 404 에러 화면 | `src/pages/ReportDetail/NotFound.tsx` | Spring이 `REPORT_NOT_FOUND` 응답 시 `index.tsx`의 catch 분기 수정 후 TODO 주석 해제 |
 
 ## MVP 심각도 체계
 
-| 심각도 | status | 아이콘 |
-|---|---|---|
-| HIGH | hitl (HITL 승인 대기 — 확장판) | `AlertTriangle` |
-| MID | auto (자동 처리 완료) | `Zap` |
-| LOW | auto (자동 처리 완료) | `Zap` |
+`severity`는 `HIGH/MID/LOW` 3단계. 뱃지 색으로만 구분합니다 (`status`·아이콘·confidence는 제거 — HITL/status는 확장판 보류).
+
+| 심각도 | 뱃지 색 |
+|---|---|
+| HIGH | 주황 |
+| MID | 노랑 |
+| LOW | 초록 |
+
+- 판정 전(LLM 미결)이면 백엔드가 `severity: null` 반환 → 현재 프론트는 `LOW`로 폴백 (중립 "미정" 뱃지 적용은 논의 중).
 
 ## 요구사항 구현 현황
 
