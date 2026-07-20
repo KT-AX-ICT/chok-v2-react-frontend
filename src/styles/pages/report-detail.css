@@ -38,20 +38,6 @@
   margin: 0;
   letter-spacing: -.03em;
 }
-.detail-confidence {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-bottom: 2px;
-}
-.detail-confidence__label {
-  font: 11px system-ui;
-  color: var(--text3);
-}
-.detail-confidence__value {
-  font: 800 15px system-ui;
-}
-
 /* ── HITL 패널 ── */
 .detail-hitl {
   background: var(--warn-surface);

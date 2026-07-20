@@ -53,7 +53,6 @@ export interface EvidenceData {
 export interface RcaData {
   rootCause: string;
   propagation: string;
-  confidence: number;
 }
 
 export interface SummaryData {

@@ -84,15 +84,6 @@ export default function ReportDetail() {
         </div>
         <div className="detail-title-row">
           <h1 className="detail-title">[{report.type}] {report.service}</h1>
-          <div className="detail-confidence">
-            <span className="detail-confidence__label">confidence</span>
-            <span
-              className="detail-confidence__value"
-              style={{ color: detail.rca.confidence >= 90 ? "#16a34a" : detail.rca.confidence >= 70 ? "#ea580c" : "#ef4444" }}
-            >
-              {detail.rca.confidence}%
-            </span>
-          </div>
         </div>
       </div>
 
