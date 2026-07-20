@@ -5,49 +5,46 @@ import { MOCK_DASHBOARD } from "../mock/dashboard";
 import type { Report, Severity } from "../types/report";
 import { SEVERITY_ORDER } from "../types/report";
 import type { ReportDetail } from "../types/reportDetail";
-import type { DashboardData } from "../types/dashboard";
+import type { DashboardData, DashboardSummary } from "../types/dashboard";
+import { utcToKst } from "../utils/dateUtils";
 
-interface RcaReport {
+// Spring ReportListItem (api-spec §2, web/dto/ReportListItem.java) — Reports 목록 · Dashboard recentReports 공용.
+// type·service·severity는 분석/판정 전이면 null (백엔드 원천 미확정, Q-007).
+interface ReportListItem {
   id: number;
-  scenario: string;
-  faultType: string;
-  rootCauseService: string;
-  severity: string;   // "HIGH" | "MID" | "LOW" from Spring
-  evidence: string;   // JSON string
-  analyzedAt: string;
+  type: string | null;
+  service: string | null;
+  severity: string | null; // "HIGH" | "MID" | "LOW" | null
+  summary: string | null;
+  detectedAt: string | null; // UTC "yyyy-MM-dd HH:mm:ss"
+  createdAt: string;
 }
 
-function severityMap(s: string): Severity {
-  const m: Record<string, Severity> = { HIGH: "high", MID: "mid", LOW: "low" };
-  return m[s.toUpperCase()] ?? "low";
+function severityMap(s: string | null): Severity {
+  if (!s) return "LOW";
+  const m: Record<string, Severity> = { HIGH: "HIGH", MID: "MID", LOW: "LOW" };
+  return m[s] ?? "LOW";
 }
 
-function toReport(r: RcaReport): Report {
+function toReport(r: ReportListItem): Report {
   const sev = severityMap(r.severity);
   return {
     id: r.id,
     severity: sev,
-    type: r.faultType,
-    service: r.rootCauseService,
-    time: r.analyzedAt,
-    status: sev === "high" ? "hitl" : "auto",
-    summary: buildSummary(r),
+    type: r.type ?? "-",
+    service: r.service ?? "-",
+    time: utcToKst(r.detectedAt ?? r.createdAt), // 백엔드는 UTC로 내려줌 — 화면 표시는 KST
+    // status: sev === "HIGH" ? "hitl" : "auto",
+    summary: r.summary ?? "",
   };
 }
 
-function buildSummary(r: RcaReport): string {
-  try {
-    const parsed: unknown = JSON.parse(r.evidence);
-    if (!Array.isArray(parsed)) return `${r.faultType} @ ${r.rootCauseService}`;
-    const result = parsed
-      .filter((e): e is { type: string } => e !== null && typeof e === "object" && typeof (e as Record<string, unknown>).type === "string")
-      .map((e) => e.type)
-      .join(" · ");
-    return result || `${r.faultType} @ ${r.rootCauseService}`;
-  } catch {
-    return `${r.faultType} @ ${r.rootCauseService}`;
-  }
-}
+// 백엔드 Pageable sort 포맷("field,direction", 화이트리스트: createdAt·severity·detectedAt)에 맞춘 매핑.
+// "latest"는 화이트리스트에 없는 값이라 그대로 보내면 서버가 조용히 기본값(createdAt desc)으로 폴백한다.
+const SORT_PARAM: Record<NonNullable<FetchReportsParams["sort"]>, string> = {
+  latest: "createdAt,desc",
+  severity: "severity,asc",
+};
 
 export interface FetchReportsParams {
   page?: number;
@@ -64,10 +61,9 @@ export interface FetchReportsResult {
   total: number;
 }
 
-// Spring Page 포맷 — 목록 아이템 필드(RcaReport)는 화면 기준 가정,
-// 래퍼(content/totalElements/totalPages/page)는 서버에서 받아옴.
+// Spring Page 포맷 (web/dto/PageResponse.java) — content는 ReportListItem[].
 interface ReportPage {
-  content: RcaReport[];
+  content: ReportListItem[];
   totalElements: number;
   totalPages: number;
   page: number;
@@ -100,7 +96,13 @@ function queryMockReports(params?: FetchReportsParams): FetchReportsResult {
 export async function fetchReports(params?: FetchReportsParams): Promise<FetchReportsResult> {
   try {
     // 서버는 Spring Page 포맷({ content, totalElements, ... })으로 응답 — 총 건수는 totalElements를 씀
-    const { data } = await api.get<ReportPage>("/api/reports", { params });
+    const { data } = await api.get<ReportPage>("/api/reports", {
+      params: {
+        ...params,
+        severity: params?.severity?.toUpperCase(), // 백엔드는 HIGH/MID/LOW 대문자로 저장·비교
+        sort: params?.sort ? SORT_PARAM[params.sort] : undefined,
+      },
+    });
     const content = Array.isArray(data?.content) ? data.content : [];
     return { items: content.map(toReport), total: data?.totalElements ?? content.length };
   } catch (err) {
@@ -114,12 +116,18 @@ export interface ReportView {
   detail: ReportDetail;  // 탭 본문용 (rca·evidence·impact·actions 등)
 }
 
-// GET /api/reports/{id} 한 번으로 헤더 + 본문을 함께 조회한다.
-// 단일 응답이 RcaReport 필드(헤더)와 ReportDetail 필드(본문)를 모두 담고 있다고 가정.
+// Spring ReportDetailResponse (web/dto/ReportDetailResponse.java) — {report, counts, detail} 3단 봉투.
+// counts·windowStart/End·trigger_info는 응답엔 있지만 화면이 안 써서 타입에서 제외.
+interface ReportDetailEnvelope {
+  report: ReportListItem;
+  detail: ReportDetail;
+}
+
+// GET /api/reports/{id} — {report, counts, detail} 봉투를 벗겨 헤더(report)/본문(detail)으로 분리.
 export async function fetchReportView(id: number): Promise<ReportView | undefined> {
   try {
-    const { data } = await api.get<RcaReport & ReportDetail>(`/api/reports/${id}`);
-    return { report: toReport(data), detail: data };
+    const { data } = await api.get<ReportDetailEnvelope>(`/api/reports/${id}`);
+    return { report: toReport(data.report), detail: data.detail };
   } catch (err) {
     if (import.meta.env.VITE_USE_MOCK === "true") {
       const report = MOCK_REPORTS.find((r) => r.id === id);
@@ -129,10 +137,16 @@ export async function fetchReportView(id: number): Promise<ReportView | undefine
   }
 }
 
+// Spring DashboardResponse — summary는 DashboardSummary와 동일 모양, recentReports만 화면과 다름(ReportListItem).
+interface DashboardResponseDto {
+  summary: DashboardSummary;
+  recentReports: ReportListItem[];
+}
+
 export async function fetchDashboard(): Promise<DashboardData> {
   try {
-    const { data } = await api.get<DashboardData>("/api/dashboard");
-    return data;
+    const { data } = await api.get<DashboardResponseDto>("/api/dashboard");
+    return { summary: data.summary, recentReports: data.recentReports.map(toReport) };
   } catch (err) {
     if (import.meta.env.VITE_USE_MOCK === "true") return MOCK_DASHBOARD;
     throw err;

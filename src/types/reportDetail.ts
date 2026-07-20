@@ -135,6 +135,8 @@ export interface ReportDetail {
     steps: string[];
     recovery: string;
   };
-  agentLog: AgentLogEntry[];
-  viz: VizData;
+  // Spring detail 계약(api-spec §2)은 rca/summary/evidence/impact/actions 5키뿐 —
+  // agentLog·viz는 후순위(AgentLogTab·VizTab 비활성) 화면 계약이라 백엔드가 보내지 않는다.
+  agentLog?: AgentLogEntry[];
+  viz?: VizData;
 }

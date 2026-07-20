@@ -8,7 +8,6 @@ export const MOCK_DASHBOARD: DashboardData = {
   summary: {
     total:      MOCK_REPORTS.length,
     highCount:  MOCK_REPORTS.filter((r) => r.severity === "high").length,
-    hitlCount:  MOCK_REPORTS.filter((r) => r.status === "hitl").length,
     todayCount: MOCK_REPORTS.filter((r) => r.time.startsWith(_today)).length,
   },
   recentReports: [...MOCK_REPORTS].sort((a, b) => b.time.localeCompare(a.time)).slice(0, 5),
