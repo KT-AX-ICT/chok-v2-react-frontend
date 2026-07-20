@@ -4,7 +4,7 @@ import { MOCK_REPORT_DETAIL } from "../mock/reportDetail";
 import { MOCK_DASHBOARD } from "../mock/dashboard";
 import type { Report, Severity } from "../types/report";
 import { SEVERITY_ORDER } from "../types/report";
-import type { ReportDetail } from "../types/reportDetail";
+import type { ReportDetail, EvidenceData } from "../types/reportDetail";
 import type { DashboardData, DashboardSummary } from "../types/dashboard";
 import { utcToKst } from "../utils/dateUtils";
 
@@ -118,16 +118,48 @@ export interface ReportView {
 
 // Spring ReportDetailResponse (web/dto/ReportDetailResponse.java) — {report, counts, detail} 3단 봉투.
 // counts·windowStart/End·trigger_info는 응답엔 있지만 화면이 안 써서 타입에서 제외.
+// detail은 result JSON 패스스루 — 내부 필드가 api-spec §2상 optional(LLM 미충족 시 생략)이라 Partial로 받는다.
 interface ReportDetailEnvelope {
   report: ReportListItem;
-  detail: ReportDetail;
+  detail: Partial<ReportDetail> | null;
+}
+
+// detail 정규화 — 백엔드가 optional 필드를 생략해도 화면(탭 컴포넌트)이 방어 없이 .map 하므로,
+// 경계에서 누락 배열·객체를 기본값으로 채워 크래시를 막는다. (api-spec §2 "프론트는 생략 렌더")
+function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDetail {
+  const ev = (d?.evidence ?? {}) as Partial<EvidenceData>;
+  return {
+    rca: {
+      rootCause: d?.rca?.rootCause ?? "",
+      propagation: d?.rca?.propagation ?? "",
+    },
+    summary: {
+      highlight: d?.summary?.highlight ?? "",
+      chips: d?.summary?.chips ?? [],
+      errorTags: d?.summary?.errorTags ?? [],
+      neutralTags: d?.summary?.neutralTags ?? [],
+    },
+    evidence: {
+      log:    { source: ev.log?.source ?? "",    conclusion: ev.log?.conclusion ?? "",    lines: ev.log?.lines ?? [] },
+      trace:  { source: ev.trace?.source ?? "",  conclusion: ev.trace?.conclusion ?? "",  spans: ev.trace?.spans ?? [] },
+      metric: { source: ev.metric?.source ?? "", conclusion: ev.metric?.conclusion ?? "", items: ev.metric?.items ?? [], snapshot: ev.metric?.snapshot ?? [] },
+    },
+    impact: {
+      metrics: d?.impact?.metrics ?? [],
+      affected: d?.impact?.affected ?? [],
+    },
+    actions: {
+      steps: d?.actions?.steps ?? [],
+      recovery: d?.actions?.recovery ?? "",
+    },
+  };
 }
 
 // GET /api/reports/{id} — {report, counts, detail} 봉투를 벗겨 헤더(report)/본문(detail)으로 분리.
 export async function fetchReportView(id: number): Promise<ReportView | undefined> {
   try {
     const { data } = await api.get<ReportDetailEnvelope>(`/api/reports/${id}`);
-    return { report: toReport(data.report), detail: data.detail };
+    return { report: toReport(data.report), detail: normalizeDetail(data.detail) };
   } catch (err) {
     if (import.meta.env.VITE_USE_MOCK === "true") {
       const report = MOCK_REPORTS.find((r) => r.id === id);
