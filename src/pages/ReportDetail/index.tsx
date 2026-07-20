@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 // import { AlertTriangle, Check, X } from "lucide-react"; // HITL UI — 주석 해제 후 사용
 import { fetchReportView } from "../../api/reports";
 import { SEVERITY_META } from "../../types/report";
@@ -14,8 +15,7 @@ import CauseTab from "./CauseTab";
 import ImpactTab from "./ImpactTab";
 import ActionTab from "./ActionTab";
 // import AgentLogTab from "./AgentLogTab"; // 후순위 — 에이전트 로그 탭 비활성화
-// TODO: 404 에러 화면 — REPORT_NOT_FOUND API 연동 후 주석 해제 (현재는 목록으로 리다이렉트만 함)
-// import NotFound from "./NotFound";
+import NotFound from "./NotFound";
 // import { validateHITLAction } from "../../utils/validateMessages";     // HITL
 // import { handleHITLApprove, handleHITLReject } from "../../utils/eventHandlers"; // HITL
 import "../../styles/pages/report-detail.css";
@@ -30,6 +30,7 @@ export default function ReportDetail() {
   const [report, setReport] = useState<Report | null>(null);
   const [detail, setDetail] = useState<ReportDetail | null>(null);
   const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [tab, setTab] = useState<Tab>("요약");
   const [agentTab, setAgentTab] = useState<AgentTab>("log");
 
@@ -40,11 +41,20 @@ export default function ReportDetail() {
     fetchReportView(numId)
       .then((view) => {
         if (ignore) return;
-        if (!view) { nav("/app/reports", { replace: true }); return; }
+        // 없는 id 또는 미완료(DONE 아님) id — mock 폴백은 undefined로 동일하게 표현
+        if (!view) { setNotFound(true); return; }
         setReport(view.report);
         setDetail(view.detail);
       })
-      .catch(() => { if (!ignore) nav("/app/reports", { replace: true }); })
+      .catch((err) => {
+        if (ignore) return;
+        // REPORT_NOT_FOUND 공통 에러(404)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
+        if (axios.isAxiosError(err) && err.response?.status === 404) {
+          setNotFound(true);
+        } else {
+          nav("/app/reports", { replace: true });
+        }
+      })
       .finally(() => { if (!ignore) setLoading(false); });
     return () => { ignore = true; };
   }, [id, nav]);
@@ -52,6 +62,7 @@ export default function ReportDetail() {
   if (loading) {
     return <div className="screen detail-page" style={{ color: "var(--text3)", font: "14px system-ui" }}>로딩 중...</div>;
   }
+  if (notFound) return <NotFound reportId={id} />;
   if (!report || !detail) return null;
 
   const sev = SEVERITY_META[report.severity];
