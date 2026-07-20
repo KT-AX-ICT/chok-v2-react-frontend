@@ -7,7 +7,7 @@ import { handleSeverityFilter, handleSearch, handleSort } from "../../utils/even
 import { toLocalDateStr } from "../../utils/dateUtils";
 import "../../styles/pages/reports.css";
 
-const VALID_FILTERS = new Set(["all", "high", "mid", "low"]);
+const VALID_FILTERS = new Set(["all", "HIGH", "MID", "LOW"]);
 const VALID_SORTS = new Set(["latest", "severity"]);
 const VALID_PAGE_SIZES = new Set(["5", "10", "20"]);
 
@@ -87,9 +87,9 @@ export default function Reports() {
           className="reports-ctrl"
         >
           <option value="all">전체 심각도</option>
-          <option value="high">HIGH</option>
-          <option value="mid">MID</option>
-          <option value="low">LOW</option>
+          <option value="HIGH">HIGH</option>
+          <option value="MID">MID</option>
+          <option value="LOW">LOW</option>
         </select>
         <input
           type="date"

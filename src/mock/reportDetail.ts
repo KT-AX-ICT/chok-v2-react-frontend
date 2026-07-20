@@ -9,7 +9,6 @@ export const MOCK_REPORT_DETAIL: ReportDetail = {
   rca: {
     rootCause: "media-service 프로세스가 내부 연결 오류로 인해 강제 종료(Code_Stop)됨",
     propagation: "media-service → compose-post 연결 실패 (200건) → nginx-thrift 5xx 응답 증가 (200건)",
-    confidence: 94,
   },
   summary: {
     highlight: "media-service 코드 실행 정지로 ComposePost 요청 200건 실패, NginxThrift 5xx 200건 발생. 자동 복구 없음.",
@@ -117,6 +116,6 @@ export const MOCK_REPORT_DETAIL: ReportDetail = {
     { time: "12:00:11", agent: "Log Agent",    action: "결론 반환 — Code_Stop 확정, 근거 3건" },
     { time: "12:00:13", agent: "Metric Agent", action: "결론 반환 — CPU 스파이크 패턴 확인, 근거 2건" },
     { time: "12:00:14", agent: "Trace Agent",  action: "결론 반환 — span 소실 + 전파 경로 확인, 근거 4건" },
-    { time: "12:00:15", agent: "Orchestrator", action: "RCA 종합 — confidence 94%, 대응 방안 생성 완료" },
+    { time: "12:00:15", agent: "Orchestrator", action: "RCA 종합 — 대응 방안 생성 완료" },
   ],
 };
