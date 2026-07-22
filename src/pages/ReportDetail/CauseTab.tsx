@@ -114,15 +114,17 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
                 {evidence.metric.conclusion}
               </span>
             </div>
-            {evidence.metric.items.map((item) => (
-              <div key={item.label} className="detail-cause-item">
-                <span className="detail-cause-item__label">{item.label}</span>
-                <span className={`detail-cause-item__value${item.exceeded ? " detail-cause-item__value--highlight" : ""}`}>
-                  {item.value}
-                  {item.threshold && <span style={{ opacity: 0.6, marginLeft: 6 }}>(임계치 {item.threshold})</span>}
-                </span>
-              </div>
-            ))}
+            <div className="detail-metric-items">
+              {evidence.metric.items.map((item) => (
+                <div key={item.label} className="detail-cause-item">
+                  <span className="detail-cause-item__label" title={item.label}>{item.label}</span>
+                  <span className={`detail-cause-item__value${item.exceeded ? " detail-cause-item__value--highlight" : ""}`}>
+                    {item.value}
+                    {item.threshold && <span style={{ opacity: 0.6, marginLeft: 6 }}>(임계치 {item.threshold})</span>}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
           <div className="detail-snapshot-label">스냅샷</div>
           <div className="detail-snapshot">

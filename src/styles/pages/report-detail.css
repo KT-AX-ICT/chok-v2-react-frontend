@@ -221,6 +221,14 @@
   flex-direction: column;
   gap: 8px;
 }
+/* 메트릭 항목 목록 — 출처·결론(헤더)은 고정, 항목이 많아지면 이 영역만 바운드 스크롤 */
+.detail-metric-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow: auto;
+}
 .detail-cause-item {
   display: flex;
   gap: 12px;
@@ -232,6 +240,8 @@
   color: var(--text3);
   width: 88px;
   white-space: nowrap;
+  overflow: hidden;          /* 라벨이 88px 넘어도 값과 겹치지 않게 */
+  text-overflow: ellipsis;   /* 넘치면 … 로 잘라 표시 (전체는 title hover) */
 }
 .detail-cause-item__value {
   font: 400 13px/1.5 system-ui;
@@ -257,10 +267,16 @@
   color: var(--text4);
   display: flex;
   flex-direction: column;
+  align-items: flex-start;   /* 자식이 컨테이너 폭에 안 갇히고 내용 폭까지 늘어나 가로 스크롤 가능 */
+  max-height: 260px;         /* raw 데이터 길어지면 영역 고정 후 세로 스크롤 */
+  overflow: auto;            /* 세로 + 가로 스크롤 */
 }
 .detail-snapshot__line {
   margin: 0 -14px;
   padding: 1px 14px;
+  white-space: nowrap;       /* 긴 줄은 줄바꿈 대신 가로 스크롤 */
+  min-width: 100%;           /* 짧은 줄도 폭 꽉 채워 하이라이트 배경이 전체 폭에 */
+  box-sizing: border-box;
 }
 .detail-snapshot__line--error {
   background: var(--chip-error);
