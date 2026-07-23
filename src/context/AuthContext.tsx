@@ -1,43 +1,46 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { login as loginApi } from "../api/reports";
+import { loginRequest, fetchMe } from "../api/auth";
+import { getTokens, getUser, setAuth, setTokens, clearAuth, type UserInfo } from "../api/tokenStore";
 
 interface AuthValue {
-  email: string | null;
-  name: string | null;
+  user: UserInfo | null;
   isAuthed: boolean;
-  signIn: (email: string, password: string, name?: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
 }
 
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [email, setEmail] = useState<string | null>(() => localStorage.getItem("chokchok_email"));
-  const [name, setName] = useState<string | null>(() => localStorage.getItem("chokchok_name"));
-  const [token, setToken] = useState<string | null>(() => localStorage.getItem("chokchok_token"));
+  // localStorage(tokenStore)에서 초기값을 동기로 읽어와, 새로고침해도 로그인 상태가 끊기지 않게 한다
+  const [user, setUser] = useState<UserInfo | null>(() => getUser());
+  const [authed, setAuthed] = useState<boolean>(() => !!getTokens()?.accessToken);
 
-  const signIn = async (email: string, password: string, displayName?: string) => {
-    const res = await loginApi(email, password);
-    const nameToStore = displayName || res.name;
-    localStorage.setItem("chokchok_token", res.token);
-    localStorage.setItem("chokchok_email", res.email);
-    if (nameToStore) localStorage.setItem("chokchok_name", nameToStore);
-    setToken(res.token);
-    setEmail(res.email);
-    if (nameToStore) setName(nameToStore);
+  const signIn = async (email: string, password: string) => {
+    // 로그인 응답엔 토큰만 온다 — 토큰을 먼저 저장해야 /auth/me 요청에 Authorization이 붙는다
+    const { accessToken, refreshToken } = await loginRequest(email, password);
+    setTokens({ accessToken, refreshToken });
+    try {
+      const nextUser = await fetchMe();
+      // setAuth: localStorage 영속화, setUser/setAuthed: 리액트 상태 동기화
+      setAuth({ accessToken, refreshToken }, nextUser);
+      setUser(nextUser);
+      setAuthed(true);
+    } catch (err) {
+      // /auth/me 실패 시 로그인 자체를 실패로 취급 — 반쪽짜리 인증 상태를 남기지 않는다
+      clearAuth();
+      throw err;
+    }
   };
 
   const signOut = () => {
-    localStorage.removeItem("chokchok_token");
-    localStorage.removeItem("chokchok_email");
-    localStorage.removeItem("chokchok_name");
-    setToken(null);
-    setEmail(null);
-    setName(null);
+    clearAuth();
+    setUser(null);
+    setAuthed(false);
   };
 
   return (
-    <AuthContext.Provider value={{ email, name, isAuthed: !!token && !!email, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, isAuthed: authed, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
