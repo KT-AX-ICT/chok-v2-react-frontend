@@ -184,28 +184,3 @@ export async function fetchDashboard(): Promise<DashboardData> {
     throw err;
   }
 }
-
-export interface AuthResult {
-  token: string;
-  email: string;
-  name?: string;
-}
-
-export const MOCK_DEMO = {
-  email: "demo@chokchok.com",
-  password: "demo1234",
-  name: "CHOKCHOKHAN",
-} as const;
-
-export async function login(email: string, password: string): Promise<AuthResult> {
-  try {
-    const { data } = await api.post<AuthResult>("/auth/login", { email, password });
-    return data;
-  } catch (err) {
-    if (import.meta.env.VITE_USE_MOCK === "true") {
-      await new Promise((r) => setTimeout(r, 1600));
-      return { token: "demo-token", email: MOCK_DEMO.email, name: MOCK_DEMO.name };
-    }
-    throw err;
-  }
-}
