@@ -69,7 +69,7 @@ export default function Dashboard() {
       {/* 최근 리포트 */}
       <div className="dashboard-recent">
         <div className="dashboard-recent__header">
-          <span className="dashboard-recent__title">최근 리포트 5건</span>
+          <span className="dashboard-recent__title">최근 리포트 {recent.length}건</span>
           <button onClick={() => nav("/app/reports")} className="dashboard-recent__all">전체 보기 →</button>
         </div>
         {recent.map((r, i) => {
