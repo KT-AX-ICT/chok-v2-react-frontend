@@ -1,6 +1,6 @@
 /* ── 사이드바 ── */
 .sidebar {
-  width: 210px;
+  width: 240px;
   flex-shrink: 0;
   background: var(--bg3);
   border-right: 1.5px solid var(--border);
@@ -72,12 +72,77 @@
   flex-shrink: 0;
 }
 .sidebar__user {
+  position: relative;
   padding: 12px 14px 14px;
   border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sidebar__user-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar__user-trigger {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  padding: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+}
+.sidebar__user-trigger:hover {
+  background: var(--bg2);
+}
+.sidebar__account-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 14px;
+  right: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .14);
+  padding: 8px;
+  z-index: 20;
+}
+.sidebar__account-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 6px;
+  font: 12px system-ui;
+}
+.sidebar__account-menu-label {
+  color: var(--text3);
+}
+.sidebar__account-menu-value {
+  color: var(--text1);
+  font-weight: 600;
+}
+.sidebar__account-menu-logout {
+  margin-top: 4px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 6px;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: none;
+  color: #ef4444;
+  font: 600 12px system-ui;
+  cursor: pointer;
+  border-radius: 0 0 6px 6px;
+}
+.sidebar__account-menu-logout:hover {
+  background: var(--bg2);
 }
 .sidebar__avatar {
   width: 32px;
@@ -100,33 +165,4 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-.sidebar__user-email {
-  font: 11px system-ui;
-  color: var(--text3);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.sidebar__logout {
-  margin-left: auto;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-/* ── 헤더 ── */
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 24px;
-  height: 68px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-  flex-shrink: 0;
 }

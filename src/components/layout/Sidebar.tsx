@@ -1,21 +1,34 @@
-import { NavLink } from "react-router-dom";
-// TODO: 확장판 — 활성화 시 아래 주석 해제
-// import { useNavigate } from "react-router-dom";
-// import { LogOut } from "lucide-react";
-// import { useAuth } from "../../context/AuthContext";
-import { LayoutGrid, List } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { LayoutGrid, List, LogOut } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import Logo from "../ui/Logo";
+import ThemeToggle from "../ui/ThemeToggle";
+import { useAuth } from "../../context/AuthContext";
 import "../../styles/components/sidebar.css";
 
-const pipeline = ["LogRead", "FastAPI", "Spring"];
+// TODO: 파이프라인 상태 섹션 — 활성화 시 아래 주석 해제
+// const pipeline = ["LogRead", "FastAPI", "Spring"];
 
 export default function Sidebar() {
-  // TODO: 확장판 — 활성화 시 아래 주석 해제
-  // const nav = useNavigate();
-  // const { email, name, signOut } = useAuth();
-  // const displayEmail = email ?? "admin@company.com";
-  // const displayName = name || displayEmail.split("@")[0];
-  // const avatar = displayName[0].toUpperCase();
+  const nav = useNavigate();
+  const { user, signOut } = useAuth();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const displayName = user?.name ?? "사용자";
+  const avatar = displayName[0]?.toUpperCase() ?? "U";
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    // 팝오버 바깥을 클릭하면 닫는다
+    const onClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, [menuOpen]);
+
+  // replace: true — 로그아웃 후 뒤로가기로 인증된 화면에 재진입하지 못하게 히스토리를 대체
+  const handleLogout = () => { setMenuOpen(false); signOut(); nav("/login", { replace: true }); };
 
   return (
     <div className="sidebar">
@@ -41,6 +54,7 @@ export default function Sidebar() {
         </NavLink>
       </nav>
 
+      {/* TODO: 파이프라인 상태 섹션 — 활성화 시 아래 주석 해제
       <div className="sidebar__pipeline">
         <div className="sidebar__pipeline-label">파이프라인 상태</div>
         <div className="sidebar__pipeline-list">
@@ -52,22 +66,46 @@ export default function Sidebar() {
           ))}
         </div>
       </div>
+      */}
 
-      {/* TODO: 확장판 — 로그인 활성화 시 아래 주석 해제
-      <div className="sidebar__user">
-        <div className="sidebar__avatar">{avatar}</div>
-        <div className="sidebar__user-info">
-          <div className="sidebar__user-name">{displayName}</div>
-          <div className="sidebar__user-email">{displayEmail}</div>
+      <div className="sidebar__user" ref={menuRef}>
+        <div className="sidebar__user-row">
+          <button
+            type="button"
+            className="sidebar__user-trigger"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-haspopup="menu"
+            aria-expanded={menuOpen}
+          >
+            <div className="sidebar__avatar">{avatar}</div>
+            <div className="sidebar__user-info">
+              <div className="sidebar__user-name">{displayName}</div>
+            </div>
+          </button>
+          <ThemeToggle compact />
         </div>
-        <button
-          onClick={() => { signOut(); nav("/"); }}
-          aria-label="로그아웃"
-          className="sidebar__logout"
-        >
-          <LogOut size={16} color="#94a3b8" />
-        </button>
-      </div> */}
+
+        {menuOpen && (
+          <div className="sidebar__account-menu" role="menu">
+            <div className="sidebar__account-menu-row">
+              <span className="sidebar__account-menu-label">이메일</span>
+              <span className="sidebar__account-menu-value">{user?.email ?? "-"}</span>
+            </div>
+            <div className="sidebar__account-menu-row">
+              <span className="sidebar__account-menu-label">소속 기업</span>
+              <span className="sidebar__account-menu-value">{user?.companyName ?? "-"}</span>
+            </div>
+            <div className="sidebar__account-menu-row">
+              <span className="sidebar__account-menu-label">기업 코드</span>
+              <span className="sidebar__account-menu-value">{user?.companyCode ?? "-"}</span>
+            </div>
+            <button type="button" onClick={handleLogout} className="sidebar__account-menu-logout" role="menuitem">
+              <LogOut size={14} />
+              로그아웃
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
