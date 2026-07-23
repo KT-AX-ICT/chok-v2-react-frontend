@@ -8,7 +8,7 @@
 | 언어 | TypeScript | 5.7 | strict 모드 |
 | 번들러 / 개발 서버 | Vite | 6 | |
 | 라우팅 | React Router | 7 | |
-| HTTP 클라이언트 | Axios | 1.7 | 백엔드 미연결 시 목 데이터 폴백 |
+| HTTP 클라이언트 | Axios | 1.7 | Bearer 토큰 자동 첨부 + 401 시 리프레시 토큰 로테이션(RTR) / 리포트·대시보드는 백엔드 미연결 시 목 데이터 폴백 |
 | 스타일링 | Tailwind CSS | 4 | `@tailwindcss/vite` 플러그인, CSS-first 설정 |
 | 아이콘 | lucide-react | 0.469 | AlertTriangle · CheckCircle2 · Zap · Check · X 등 |
 | 그래프 시각화 | @xyflow/react | 12 | 서비스 의존성 그래프 (React Flow) |
@@ -18,7 +18,7 @@
 
 > 프로덕션: https://chokchok-sigma.vercel.app
 
-`VITE_USE_MOCK=true` 환경에서 목 데이터로 동작합니다. 별도 로그인 없이 대시보드에 바로 진입됩니다.
+로그인 후 대시보드로 진입합니다. `VITE_USE_MOCK=true`는 리포트·대시보드 데이터에만 적용되는 폴백이며, 로그인 자체는 실 백엔드(`/api/auth/*`) 연동이 필요합니다 — 백엔드가 없으면 로그인 화면 이후로 진행할 수 없습니다.
 
 ---
 
@@ -62,12 +62,17 @@ VITE_USE_MOCK=false   # 실 API 호출. true = API 실패 시 mock 데이터로 
 
 **Spring 기대 엔드포인트**
 
-| Method | Path | 화면 |
-|--------|------|------|
-| GET | `/api/dashboard` | 대시보드 (집계 + 최근 리포트) |
-| GET | `/api/reports` | 리포트 목록 (`page`·`size`·`severity`·`from`·`to`·`search`·`sort`) |
-| GET | `/api/reports/{id}` | 리포트 상세 (`{report, counts, detail}` 봉투) |
+| Method | Path | 인증 | 화면 |
+|--------|------|------|------|
+| POST | `/api/auth/login` | 공개 | 로그인 |
+| POST | `/api/auth/refresh` | 공개 | 액세스 토큰 재발급 (RTR — 401 응답 시 프론트가 자동 호출) |
+| GET | `/api/auth/me` | Bearer | 로그인 유저 정보 (마이페이지 · 사이드바) |
+| GET | `/api/dashboard` | Bearer | 대시보드 (집계 + 최근 리포트) |
+| GET | `/api/reports` | Bearer | 리포트 목록 (`page`·`size`·`severity`·`from`·`to`·`search`·`sort`) |
+| GET | `/api/reports/{id}` | Bearer | 리포트 상세 (`{report, counts, detail}` 봉투) |
 
+- Bearer 필요 엔드포인트는 `Authorization: Bearer <accessToken>` 헤더 필수. 없거나 무효면 401, 권한 부족이면 403.
+- 에러 응답 공통 봉투: `{"error":{"code":"...","message":"..."}}` (예: 로그인 실패 `INVALID_CREDENTIALS`).
 - `severity`는 `HIGH/MID/LOW` 문자열로 반환되며 프론트도 동일 대문자로 사용. 판정 전이면 `null` 가능.
 - 없는/미완료(DONE 아님) id는 `404 {error:{code:"REPORT_NOT_FOUND"}}` → 프론트 NotFound 화면으로 연결.
 - 시각은 UTC `yyyy-MM-dd HH:mm:ss`로 내려오며 프론트가 KST로 변환해 표시.
@@ -83,8 +88,10 @@ src/
 ├─ index.css                       # Tailwind 4 + 디자인 토큰(라이트/다크) + 기본 리셋
 │
 ├─ api/
-│  ├─ client.ts                    # Axios 인스턴스 + 인터셉터 (인증 토큰 주입)
-│  └─ reports.ts                   # fetchDashboard / fetchReports / fetchReport / fetchReportDetail — 목 폴백 포함
+│  ├─ client.ts                    # Axios 인스턴스 + 인터셉터 (Bearer 첨부, 401 시 RTR로 토큰 재발급 후 재시도)
+│  ├─ auth.ts                      # loginRequest(POST /api/auth/login) · fetchMe(GET /api/auth/me)
+│  ├─ tokenStore.ts                # localStorage 기반 토큰·유저 정보 저장/조회
+│  └─ reports.ts                   # fetchDashboard / fetchReports / fetchReportView — 목 폴백 포함
 │
 ├─ mock/                           # MVP 목 데이터 (백엔드 미연결 시 폴백)
 │  ├─ reports.ts                   # MOCK_REPORTS — 리포트 목록 3건
@@ -98,12 +105,13 @@ src/
 │
 ├─ context/
 │  ├─ ThemeContext.tsx             # 다크 모드 상태 (localStorage 유지)
-│  └─ AuthContext.tsx              # 로그인 상태 (localStorage 유지)
+│  ├─ AuthContext.tsx              # 로그인 상태 — 로그인 성공 후 /auth/me로 유저 정보 이어서 조회, localStorage 유지
+│  └─ ToastContext.tsx             # 하단 토스트 알림 (2.5초 자동 닫힘)
 │
 ├─ components/
 │  ├─ layout/
 │  │  ├─ AppShell.tsx             # Sidebar + Header + Outlet 조합
-│  │  ├─ Sidebar.tsx              # 네비게이션 · 파이프라인 상태 · 사용자 정보
+│  │  ├─ Sidebar.tsx              # 네비게이션 · 사용자 정보 (파이프라인 상태는 확장판 보류로 주석 처리)
 │  │  ├─ Header.tsx               # 상단 바 (ThemeToggle)
 │  │  └─ RequireAuth.tsx          # 보호 라우트 (미로그인 시 /login 리다이렉트)
 │  └─ ui/
@@ -115,29 +123,32 @@ src/
 │  ├─ Landing/
 │  │  └─ index.tsx                # 서비스 소개 랜딩 페이지
 │  ├─ Login/
-│  │  ├─ index.tsx                # 상태 관리 + 폼 전환
+│  │  ├─ index.tsx                # 로그인 상태 관리 + 검증 + 에러 처리
 │  │  ├─ LoginForm.tsx            # 로그인 폼
-│  │  ├─ ForgotForm.tsx           # 비밀번호 찾기 폼
-│  │  └─ SignupForm.tsx           # 회원가입 폼
+│  │  └─ ForgotForm.tsx           # 비밀번호 찾기 폼 (휴면 — 미사용, 확장판 대기)
+│  ├─ MyPage/
+│  │  └─ index.tsx                # 내 정보(이름 · 기업 코드) 조회
 │  ├─ Dashboard/
 │  │  └─ index.tsx                # KPI 카드 · HITL 알림 · 최근 리포트
 │  ├─ Reports/
 │  │  └─ index.tsx                # 필터 · 검색 · 정렬 · 페이지네이션
-│  └─ ReportDetail/
-│     ├─ index.tsx                # 헤더 · HITL 패널 · RCA 블록 · 탭 네비 (탭: 요약·원인·영향·조치, 시각화 탭 주석 처리)
-│     ├─ SummaryTab.tsx
-│     ├─ CauseTab.tsx             # Log/Metric/Trace 서브탭 포함
-│     ├─ ImpactTab.tsx
-│     ├─ ActionTab.tsx
-│     ├─ AgentLogTab.tsx
-│     ├─ VizTab.tsx               # 시각화 탭 — 현재 주석 처리 (히트맵 방식으로 재설계 예정)
-│     ├─ DependencyGraph.tsx      # React Flow + dagre 서비스 의존성 그래프
-│     └─ NotFound.tsx             # 404 에러 화면 — REPORT_NOT_FOUND(없는/미완료 id) 응답 시 표시 (index.tsx catch에서 연결됨)
+│  ├─ ReportDetail/
+│  │  ├─ index.tsx                # 헤더 · HITL 패널 · RCA 블록 · 탭 네비 (탭: 요약·원인·영향·조치, 시각화 탭 주석 처리)
+│  │  ├─ SummaryTab.tsx
+│  │  ├─ CauseTab.tsx             # Log/Metric/Trace 서브탭 포함
+│  │  ├─ ImpactTab.tsx
+│  │  ├─ ActionTab.tsx
+│  │  ├─ AgentLogTab.tsx
+│  │  ├─ VizTab.tsx               # 시각화 탭 — 현재 주석 처리 (히트맵 방식으로 재설계 예정)
+│  │  ├─ DependencyGraph.tsx      # React Flow + dagre 서비스 의존성 그래프
+│  │  └─ NotFound.tsx             # 리포트 상세 전용 404 — REPORT_NOT_FOUND(없는/미완료 id) 응답 시 표시 (index.tsx catch에서 연결됨)
+│  └─ NotFound/
+│     └─ index.tsx                # 최상위 404 — 미정의 경로 진입 시 표시
 │
 ├─ utils/
 │  ├─ dateUtils.ts                # toLocalDateStr — Date → "YYYY-MM-DD" 로컬 날짜 변환
 │  ├─ eventHandlers.ts            # 필터·검색·정렬·HITL 이벤트 핸들러
-│  └─ validateMessages.ts         # 로그인·회원가입·비번찾기·HITL 입력 검증
+│  └─ validateMessages.ts         # 로그인 입력 검증 (회원가입·비번찾기·HITL 검증은 확장판 보류로 주석 처리)
 │
 └─ styles/
    ├─ shared.css                   # 공통 컴포넌트 스타일 (Tailwind @apply 기반, 페이지 무관 재사용)
@@ -166,18 +177,20 @@ src/
 | `/app/dashboard` | 대시보드 (KPI · 최근 리포트) | ✅ 활성 |
 | `/app/reports` | 리포트 목록 | ✅ 활성 |
 | `/app/reports/:id` | 리포트 상세 | ✅ 활성 |
+| `/app/mypage` | 마이페이지 | ✅ 활성 |
+| `/app/*`, 미정의 경로 | 404 | ✅ 활성 |
+| `/login` | 로그인 | ✅ 활성 |
 | `/` (랜딩) | 서비스 소개 랜딩 페이지 | ⏸ 확장판 |
-| `/login` | 로그인 · 회원가입 · 비밀번호 찾기 | ⏸ 확장판 |
 
 ## 확장판 비활성화 항목
 
 | 항목 | 파일 | 복원 방법 |
 |---|---|---|
 | 랜딩 페이지 | `src/pages/Landing/` | `App.tsx` TODO 주석 해제 |
-| 로그인·회원가입 | `src/pages/Login/` | `App.tsx` TODO 주석 해제 + `RequireAuth` 복원 |
-| 사이드바 유저 정보·로그아웃 | `src/components/layout/Sidebar.tsx` | TODO 주석 해제 |
+| 사이드바 파이프라인 상태 | `src/components/layout/Sidebar.tsx` | TODO 주석 해제 |
 | 대시보드 HITL KPI·알림 배너 | `src/pages/Dashboard/index.tsx` | HITL 확장 방향 확정 후 TODO 주석 해제 (ReportDetail HITL 패널과 함께) |
 | 시각화 탭 (FR-S-05) | `src/pages/ReportDetail/VizTab.tsx` | 히트맵 재설계 후 TODO 주석 해제 |
+| 회원가입 · 비밀번호 찾기 | `src/utils/validateMessages.ts`(주석 처리), `src/pages/Login/ForgotForm.tsx`(휴면) | 정책 확정 후 각 함수 주석 해제 + 화면 연결 |
 
 ## MVP 심각도 체계
 
