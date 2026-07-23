@@ -8,15 +8,15 @@ interface ThemeValue {
 const ThemeContext = createContext<ThemeValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [dark, setDark] = useState<boolean>(() => localStorage.getItem("chokchok_dark") === "1");
+  const [dark, setDark] = useState<boolean>(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
     if (dark) {
       document.documentElement.setAttribute("data-dark", "1");
-      localStorage.setItem("chokchok_dark", "1");
+      localStorage.setItem("theme", "dark");
     } else {
       document.documentElement.removeAttribute("data-dark");
-      localStorage.setItem("chokchok_dark", "0");
+      localStorage.setItem("theme", "light");
     }
   }, [dark]);
 
