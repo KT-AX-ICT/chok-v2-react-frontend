@@ -39,7 +39,6 @@ export interface MetricEvidence {
   source: string;
   conclusion: string;
   items: MetricItem[];
-  snapshot: string[];
 }
 
 export interface EvidenceData {

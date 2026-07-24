@@ -1,5 +1,6 @@
 import type { AgentTab, EvidenceData } from "../../types/reportDetail";
 import SectionHeader from "../../components/ui/SectionHeader";
+import SentenceBlock from "../../components/ui/SentenceBlock";
 
 const AGENT_LABELS: Record<AgentTab, string> = {
   log:    "Log Agent",
@@ -55,17 +56,15 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
             </div>
             <div className="detail-cause-item">
               <span className="detail-cause-item__label">분석 결론</span>
-              <span className="detail-cause-item__value detail-cause-item__value--highlight">
-                {evidence.log.conclusion}
-              </span>
+              <SentenceBlock text={evidence.log.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
           <div className="detail-snapshot-label">로그</div>
           <div className="detail-snapshot">
             {evidence.log.lines.map((line, i) => (
               <div key={i} className={LOG_LEVEL_CLASS[line.level] ?? "detail-snapshot__line"}>
-                <span style={{ opacity: 0.55, marginRight: 10 }}>{line.timestamp}</span>
-                <span style={{ fontWeight: 700, marginRight: 8 }}>[{line.level}]</span>
+                <span style={{ opacity: 0.55 }}>{line.timestamp}</span>{"  "}
+                <span style={{ fontWeight: 700 }}>[{line.level}]</span>{"  "}
                 {line.msg}
               </div>
             ))}
@@ -82,18 +81,16 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
             </div>
             <div className="detail-cause-item">
               <span className="detail-cause-item__label">분석 결론</span>
-              <span className="detail-cause-item__value detail-cause-item__value--highlight">
-                {evidence.trace.conclusion}
-              </span>
+              <SentenceBlock text={evidence.trace.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
           <div className="detail-snapshot-label">트레이스</div>
           <div className="detail-snapshot">
             {evidence.trace.spans.map((span, i) => (
               <div key={i} className={SPAN_STATUS_CLASS[span.status] ?? "detail-snapshot__line"}>
-                <span style={{ opacity: 0.5, marginRight: 10 }}>{span.traceId}</span>
-                <span style={{ marginRight: 10 }}>{span.from}→{span.to}</span>
-                <span style={{ marginRight: 10 }}>{span.duration}</span>
+                <span style={{ opacity: 0.5 }}>{span.traceId}</span>{"  "}
+                <span>{span.from}→ {span.to}</span>{"  "}
+                <span>{span.duration}</span>{"  "}
                 <span style={{ fontWeight: 700 }}>{span.status.toUpperCase()}</span>
               </div>
             ))}
@@ -110,32 +107,15 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
             </div>
             <div className="detail-cause-item">
               <span className="detail-cause-item__label">분석 결론</span>
-              <span className="detail-cause-item__value detail-cause-item__value--highlight">
-                {evidence.metric.conclusion}
-              </span>
-            </div>
-            <div className="detail-metric-items">
-              {evidence.metric.items.map((item) => (
-                <div key={item.label} className="detail-cause-item">
-                  <span className="detail-cause-item__label" title={item.label}>{item.label}</span>
-                  <span className={`detail-cause-item__value${item.exceeded ? " detail-cause-item__value--highlight" : ""}`}>
-                    {item.value}
-                    {item.threshold && <span style={{ opacity: 0.6, marginLeft: 6 }}>(임계치 {item.threshold})</span>}
-                  </span>
-                </div>
-              ))}
+              <SentenceBlock text={evidence.metric.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
           <div className="detail-snapshot-label">스냅샷</div>
           <div className="detail-snapshot">
-            {evidence.metric.snapshot.map((line, i) => (
-              <div key={i} className={
-                line.includes("종료") || line.includes("스파이크")
-                  ? "detail-snapshot__line detail-snapshot__line--error"
-                  : line.includes("99%")
-                    ? "detail-snapshot__line detail-snapshot__line--warn"
-                    : "detail-snapshot__line"
-              }>{line}</div>
+            {evidence.metric.items.map((item, i) => (
+              <div key={i} className={item.exceeded ? "detail-snapshot__line detail-snapshot__line--warn" : "detail-snapshot__line"}>
+                {item.label}: {item.value}{item.threshold ? ` (임계치 ${item.threshold})` : ""}
+              </div>
             ))}
           </div>
         </>

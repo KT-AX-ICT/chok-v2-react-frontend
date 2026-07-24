@@ -155,6 +155,9 @@
 .reports-td--service {
   font: 12px system-ui;
   color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .reports-td--time {
   font: 11px system-ui;

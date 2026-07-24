@@ -141,7 +141,7 @@ function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDet
     evidence: {
       log:    { source: ev.log?.source ?? "",    conclusion: ev.log?.conclusion ?? "",    lines: ev.log?.lines ?? [] },
       trace:  { source: ev.trace?.source ?? "",  conclusion: ev.trace?.conclusion ?? "",  spans: ev.trace?.spans ?? [] },
-      metric: { source: ev.metric?.source ?? "", conclusion: ev.metric?.conclusion ?? "", items: ev.metric?.items ?? [], snapshot: ev.metric?.snapshot ?? [] },
+      metric: { source: ev.metric?.source ?? "", conclusion: ev.metric?.conclusion ?? "", items: ev.metric?.items ?? [] },
     },
     impact: {
       metrics: d?.impact?.metrics ?? [],
