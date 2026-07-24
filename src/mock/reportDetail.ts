@@ -44,6 +44,7 @@ export const MOCK_REPORT_DETAIL: ReportDetail = {
         { label: "CPU 사용률", value: "99.8%", threshold: "90%", exceeded: true },
         { label: "메모리",     value: "1.9 GB / 2.0 GB" },
         { label: "요청 처리량", value: "12:00 이후 0 req/s" },
+        { label: "system_network_receive_bytes", value: "52.2947" },
       ],
       snapshot: [
         "11:58  cpu=42%  mem=1.1GB  req=320/s",
@@ -58,6 +59,7 @@ export const MOCK_REPORT_DETAIL: ReportDetail = {
       { label: "NginxThrift 5xx", value: "200건" },
       { label: "영향 서비스",     value: "2개" },
       { label: "지속 시간",       value: "23분" },
+      { label: "nginx /wrk2-api/post/compose", value: "2026-07-24T06:26:49.451683, 2026-07-24T06:28:04.562683에 http_status_code=500" },
     ],
     affected: [
       { service: "compose-post", errors: 200, type: "연결 실패" },
