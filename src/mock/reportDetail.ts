@@ -72,42 +72,6 @@ export const MOCK_REPORT_DETAIL: ReportDetail = {
     ],
     recovery: "예상 복구: 수동 복구 필요 (자동 복구 없음)",
   },
-  viz: {
-    graph: {
-      nodes: [
-        { id: "nginx-thrift",  status: "ok" },
-        { id: "compose-post",  status: "error" },
-        { id: "media-service", status: "down" },
-        { id: "user-service",  status: "ok" },
-        { id: "text-service",  status: "ok" },
-      ],
-      edges: [
-        { from: "nginx-thrift",  to: "compose-post",  isErrorPath: false },
-        { from: "compose-post",  to: "media-service", isErrorPath: true },
-        { from: "compose-post",  to: "user-service",  isErrorPath: false },
-        { from: "compose-post",  to: "text-service",  isErrorPath: false },
-      ],
-    },
-    timeline: {
-      detectedAt: "14:32",
-      events: [
-        // ── media-service: 프로세스 강제 종료 (log)
-        { timestamp: "14:28", service: "media-service", source: "log",   severity: 3, detail: "Process terminated unexpectedly", isDown: true },
-        { timestamp: "14:35", service: "media-service", source: "log",   severity: 3, detail: "Connection refused (×200)",        isDown: true },
-        { timestamp: "14:55", service: "media-service", source: "log",   severity: 3, detail: "미복구 — 수동 재기동 필요",           isDown: true },
-        // ── compose-post: media-service 연결 실패 (trace)
-        { timestamp: "14:32", service: "compose-post",  source: "trace", severity: 2, detail: "media-service 타임아웃 (1240ms)" },
-        { timestamp: "14:35", service: "compose-post",  source: "trace", severity: 2, detail: "media-service span 소실" },
-        { timestamp: "14:40", service: "compose-post",  source: "trace", severity: 2, detail: "요청 큐 적체" },
-        { timestamp: "14:47", service: "compose-post",  source: "trace", severity: 1, detail: "부분 복구 — 요청 재시도 진행 중" },
-        // ── nginx-thrift: 다운스트림 5xx 전파 (log)
-        { timestamp: "14:32", service: "nginx-thrift",  source: "log",   severity: 1, detail: "HTTP 5xx 응답 시작" },
-        { timestamp: "14:35", service: "nginx-thrift",  source: "log",   severity: 2, detail: "5xx 급증 — compose-post 전파" },
-        { timestamp: "14:40", service: "nginx-thrift",  source: "log",   severity: 2, detail: "5xx 지속" },
-        { timestamp: "14:47", service: "nginx-thrift",  source: "log",   severity: 1, detail: "5xx 감소" },
-      ],
-    },
-  },
   agentLog: [
     { time: "12:00:05", agent: "Orchestrator", action: "장애 감지 — severity=high, 멀티에이전트 분석 시작" },
     { time: "12:00:06", agent: "Log Agent",    action: "media-service 로그 수집 시작 (최근 30분)" },

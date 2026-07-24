@@ -79,47 +79,6 @@ export interface AgentLogEntry {
   action: string;
 }
 
-// --- Viz: dependency graph (log + trace 기반) ---
-
-export interface GraphNode {
-  id: string;
-  status: "ok" | "error" | "down";
-}
-
-export interface GraphEdge {
-  from: string;
-  to: string;
-  isErrorPath: boolean;
-}
-
-export interface GraphData {
-  nodes: GraphNode[];
-  edges: GraphEdge[];
-}
-
-// --- Viz: fault timeline (log + trace 분석 결과 기반 장애 이벤트) ---
-
-export type FaultSource = "log" | "trace";
-
-export interface FaultEvent {
-  timestamp: string;       // "HH:mm" or "HH:mm:ss"
-  service: string;
-  source: FaultSource;     // 이벤트 출처: log 분석 | trace 분석
-  severity: 1 | 2 | 3;    // 1=경미 2=심각 3=치명
-  detail?: string;         // 오류 내용 요약 (선택)
-  isDown?: boolean;        // 서비스 완전 다운 여부
-}
-
-export interface FaultTimeline {
-  detectedAt: string | null; // 최초 감지 시각, null=미감지
-  events: FaultEvent[];
-}
-
-export interface VizData {
-  graph: GraphData;        // log + trace에서 도출된 서비스 의존성 그래프
-  timeline: FaultTimeline; // log/trace timestamp 기반 장애 발생·전파 이벤트
-}
-
 // --- Top-level ---
 
 export interface ReportDetail {
@@ -135,7 +94,6 @@ export interface ReportDetail {
     recovery: string;
   };
   // Spring detail 계약(api-spec §2)은 rca/summary/evidence/impact/actions 5키뿐 —
-  // agentLog·viz는 후순위(AgentLogTab·VizTab 비활성) 화면 계약이라 백엔드가 보내지 않는다.
+  // agentLog는 후순위(AgentLogTab 비활성) 화면 계약이라 백엔드가 보내지 않는다.
   agentLog?: AgentLogEntry[];
-  viz?: VizData;
 }

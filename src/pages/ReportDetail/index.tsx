@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-// import { AlertTriangle, Check, X } from "lucide-react"; // HITL UI — 주석 해제 후 사용
 import { fetchReportView } from "../../api/reports";
 import { SEVERITY_META } from "../../types/report";
 import type { Report } from "../../types/report";
 import type { ReportDetail } from "../../types/reportDetail";
 import type { AgentTab } from "../../types/reportDetail";
-// TODO: 시각화 탭 — 히트맵 재설계 후 주석 해제
-// import VizTab from "./VizTab";
 import SectionHeader from "../../components/ui/SectionHeader";
 import SummaryTab from "./SummaryTab";
 import CauseTab from "./CauseTab";
@@ -16,12 +13,9 @@ import ImpactTab from "./ImpactTab";
 import ActionTab from "./ActionTab";
 // import AgentLogTab from "./AgentLogTab"; // 후순위 — 에이전트 로그 탭 비활성화
 import NotFound from "./NotFound";
-// import { validateHITLAction } from "../../utils/validateMessages";     // HITL
-// import { handleHITLApprove, handleHITLReject } from "../../utils/eventHandlers"; // HITL
 import "../../styles/pages/report-detail.css";
 
 type Tab = "요약" | "원인" | "영향" | "조치";
-// TODO: 시각화 탭 — 히트맵 재설계 후 "시각화" 추가
 const TABS: Tab[] = ["요약", "원인", "영향", "조치"];
 
 export default function ReportDetail() {
@@ -87,14 +81,6 @@ export default function ReportDetail() {
         </div>
       </div>
 
-      {/* TODO: HITL 패널 — 확장 방향 확정 후 주석 해제 및 API 연동
-      {showHitl && (
-        <div className="detail-hitl">
-          ...승인/거절 UI...
-        </div>
-      )}
-      */}
-
       {/* RCA 결론 블록 */}
       <div className="detail-rca">
         <SectionHeader label="종합 에이전트 RCA 결론" />
@@ -131,8 +117,6 @@ export default function ReportDetail() {
       {tab === "원인"          && <CauseTab agentTab={agentTab} evidence={detail.evidence} onAgentTabChange={setAgentTab} />}
       {tab === "영향"          && <ImpactTab metrics={detail.impact.metrics} affected={detail.impact.affected} />}
       {tab === "조치"          && <ActionTab steps={detail.actions.steps} recovery={detail.actions.recovery} />}
-      {/* TODO: 시각화 탭 — 히트맵 재설계 후 주석 해제
-      {tab === "시각화" && <VizTab viz={detail.viz} />} */}
       {/* {tab === "에이전트 로그" && <AgentLogTab agentLog={detail.agentLog} />} */}
     </div>
   );

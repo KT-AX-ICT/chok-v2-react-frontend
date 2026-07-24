@@ -34,7 +34,6 @@ function toReport(r: ReportListItem): Report {
     type: r.type ?? "-",
     service: r.service ?? "-",
     time: utcToKst(r.detectedAt ?? r.createdAt), // 백엔드는 UTC로 내려줌 — 화면 표시는 KST
-    // status: sev === "HIGH" ? "hitl" : "auto",
     summary: r.summary ?? "",
   };
 }

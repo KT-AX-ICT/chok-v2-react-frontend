@@ -3,7 +3,6 @@ dist
 dist-ssr
 *.local
 .env
-.env.*
 .DS_Store
 .vercel
 .idea
