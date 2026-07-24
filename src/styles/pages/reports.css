@@ -149,6 +149,8 @@
   font: 600 13px system-ui;
   color: var(--text1);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .reports-td--service {
   font: 12px system-ui;

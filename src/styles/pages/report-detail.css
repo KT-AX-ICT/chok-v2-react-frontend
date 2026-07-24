@@ -191,6 +191,11 @@
   max-height: 220px;
   overflow: auto;
 }
+/* metric 이름은 스네이크케이스라 길다 — 공용 라벨(88px, ellipsis)과 달리 2줄 허용 */
+.detail-metric-items .detail-cause-item__label {
+  width: 160px;
+  white-space: normal;
+}
 .detail-cause-item {
   display: flex;
   gap: 12px;
@@ -232,7 +237,11 @@
   align-items: flex-start;   /* 자식이 컨테이너 폭에 안 갇히고 내용 폭까지 늘어나 가로 스크롤 가능 */
   max-height: 260px;         /* raw 데이터 길어지면 영역 고정 후 세로 스크롤 */
   overflow: auto;            /* 세로 + 가로 스크롤 */
+  scrollbar-width: thin;     /* OS 기본(스크롤 중에만 표시)이면 가로 스크롤 가능한지 안 보임 — 항상 얇게 표시 */
 }
+.detail-snapshot::-webkit-scrollbar { height: 8px; width: 8px; }
+.detail-snapshot::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.detail-snapshot::-webkit-scrollbar-track { background: transparent; }
 .detail-snapshot__line {
   margin: 0 -14px;
   padding: 1px 14px;
@@ -252,25 +261,28 @@
 /* ── 영향 탭 ── */
 .detail-impact-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
 .detail-impact-metric {
-  background: var(--err-surface);
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  padding: 14px;
-  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid #ef4444;
+  border-radius: 6px;
+  padding: 10px 12px;
 }
 .detail-impact-metric__label {
-  font: 11px system-ui;
-  color: var(--text2);
-  margin-bottom: 6px;
+  font: 700 10px system-ui;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text3);
+  margin-bottom: 5px;
 }
 .detail-impact-metric__value {
-  font: 800 24px system-ui;
-  color: #ef4444;
+  font: 400 12.5px/1.55 ui-monospace, monospace;
+  color: var(--text4);
+  word-break: break-word;
 }
 .detail-impact-table {
   width: 100%;
