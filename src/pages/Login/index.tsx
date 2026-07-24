@@ -53,11 +53,15 @@ export default function Login() {
       showToast("로그인되었습니다.");
       nav("/app/dashboard");
     } catch (err) {
-      // 서버가 에러 봉투({error:{message}})를 주면 그 메시지를 그대로 노출, 없으면(네트워크 오류 등) 일반 메시지로 폴백
-      const serverMessage = err instanceof AxiosError
-        ? (err.response?.data as ApiErrorResponse | undefined)?.error?.message
+      // api-spec: INVALID_CREDENTIALS(계정 없음·비번 불일치 동일 처리)는 프론트 자체 문구로 노출, 그 외(네트워크 오류 등)는 일반 메시지
+      const code = err instanceof AxiosError
+        ? (err.response?.data as ApiErrorResponse | undefined)?.error?.code
         : undefined;
-      setFormError(serverMessage ?? "로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.");
+      setFormError(
+        code === "INVALID_CREDENTIALS"
+          ? "이메일 또는 비밀번호가 일치하지 않습니다."
+          : "로그인 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.",
+      );
       setLoading(false);
     }
   };

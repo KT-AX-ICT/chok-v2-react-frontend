@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { fetchReportView } from "../../api/reports";
+import type { ApiErrorResponse } from "../../api/client";
 import { SEVERITY_META } from "../../types/report";
 import type { Report } from "../../types/report";
 import type { ReportDetail } from "../../types/reportDetail";
@@ -42,8 +43,11 @@ export default function ReportDetail() {
       })
       .catch((err) => {
         if (ignore) return;
-        // REPORT_NOT_FOUND 공통 에러(404)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
+        // REPORT_NOT_FOUND 공통 에러(404 + error.code)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
+        const code = axios.isAxiosError(err)
+          ? (err.response?.data as ApiErrorResponse | undefined)?.error?.code
+          : undefined;
+        if (axios.isAxiosError(err) && err.response?.status === 404 && code === "REPORT_NOT_FOUND") {
           setNotFound(true);
         } else {
           nav("/app/reports", { replace: true });
