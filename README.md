@@ -14,9 +14,7 @@
 
 ## 데모
 
-> 프로덕션: https://chokchok-sigma.vercel.app
-
-로그인 후 대시보드로 진입합니다. `VITE_USE_MOCK=true`는 리포트·대시보드 데이터에만 적용되는 폴백이며, 로그인 자체는 실 백엔드(`/api/auth/*`) 연동이 필요합니다 — 백엔드가 없으면 로그인 화면 이후로 진행할 수 없습니다.
+현재 프로덕션(위 링크)은 백엔드 미연동(mock) 상태라 로그인 이후 화면은 확인할 수 없습니다. 로그인까지 포함한 전체 흐름은 아래 [로컬 E2E](#백엔드-연결--로컬-e2e)로 확인하세요.
 
 ---
 
@@ -39,21 +37,27 @@ npm run preview
 
 ## 백엔드 연결 / 로컬 E2E
 
-`.env.local`(git 미추적)에 아래 값을 설정합니다.
+`.env.example`을 복사해 `.env`(git 미추적)를 만들고 아래 값을 설정합니다.
+
+```bash
+cp .env.example .env
+```
 
 ```
 VITE_API_BASE_URL=http://localhost:8080
-VITE_USE_MOCK=false   # 실 API 호출. true = API 실패 시 mock 데이터로 폴백
+VITE_USE_MOCK=false   # true = 서버 응답 자체가 없을 때만 mock 폴백 (4xx/5xx는 그대로 노출)
 ```
 
-> `VITE_USE_MOCK`은 "mock/실서버" 하드 스위치가 아니라 **실패 시 mock 폴백** 스위치입니다.
-> 코드는 항상 실 API를 먼저 호출하고, `true`일 때만 호출 실패 시 mock으로 폴백합니다.
-> (Spring이 켜져 있으면 `true`여도 실 데이터를 씀)
-
 **로컬 E2E — 프론트 ↔ Spring 직접 연결**
-1. Spring 백엔드를 `localhost:8080`에 기동
-2. `VITE_USE_MOCK=false`
-3. 프론트를 `localhost:5173`으로 실행 (`npm run dev`) — Spring CORS가 `5173`을 허용하므로 그대로 연결됨
+
+1. Spring 백엔드를 `localhost:8080`에 기동 (`docker compose up -d --build`)
+2. Spring 저장소의 `scripts/seed-dev.sql` 실행 (최초 1회, 멱등) — 시드 없으면 로그인 항상 `INVALID_CREDENTIALS`
+   ```bash
+   docker compose cp scripts/seed-dev.sql db:/tmp/seed-dev.sql
+   docker compose exec db sh -c 'mysql -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --default-character-set=utf8mb4 "$MYSQL_DATABASE" < /tmp/seed-dev.sql'
+   ```
+3. `VITE_USE_MOCK=false`, 프론트를 `localhost:5173`으로 실행 (`npm run dev`)
+4. 샘플 계정으로 로그인: `sn.user@chokchok.dev` / `chokchok1!`
 
 **mock 데이터로 개발 — 백엔드 없이**
 - `VITE_USE_MOCK=true` + Spring 미기동 → API 실패 시 mock 데이터로 폴백
@@ -75,7 +79,7 @@ VITE_USE_MOCK=false   # 실 API 호출. true = API 실패 시 mock 데이터로 
 - 없는/미완료(DONE 아님) id는 `404 {error:{code:"REPORT_NOT_FOUND"}}` → 프론트 NotFound 화면으로 연결.
 - 시각은 UTC `yyyy-MM-dd HH:mm:ss`로 내려오며 프론트가 KST로 변환해 표시.
 
-**배포 연결:** 현재 Vercel은 mock으로 동작. 실 연동은 Spring 공개 URL 확정 후 결정(같은 도메인 `/api` proxy 또는 별도 도메인 + CORS).
+**배포 연결:** 실 연동은 Spring 공개 URL 확정 후 결정(같은 도메인 `/api` proxy 또는 별도 도메인 + CORS).
 
 ## 구조
 
