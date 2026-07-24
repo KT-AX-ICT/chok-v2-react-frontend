@@ -8,7 +8,7 @@
 | 언어 | TypeScript | 5.7 | strict 모드 |
 | 번들러 / 개발 서버 | Vite | 6 | |
 | 라우팅 | React Router | 7 | |
-| HTTP 클라이언트 | Axios | 1.7 | Bearer 토큰 자동 첨부 + 401 시 리프레시 토큰 로테이션(RTR) / 리포트·대시보드는 백엔드 미연결 시 목 데이터 폴백 |
+| HTTP 클라이언트 | Axios | 1.7 | Bearer 토큰 자동 첨부 + 401 시 리프레시 토큰 로테이션(RTR)
 | 스타일링 | Tailwind CSS | 4 | `@tailwindcss/vite` 플러그인, CSS-first 설정 |
 | 아이콘 | lucide-react | 0.469 | AlertTriangle · CheckCircle2 · Zap · Check · X 등 |
 
@@ -79,8 +79,6 @@ VITE_USE_MOCK=false   # true = 서버 응답 자체가 없을 때만 mock 폴백
 - 없는/미완료(DONE 아님) id는 `404 {error:{code:"REPORT_NOT_FOUND"}}` → 프론트 NotFound 화면으로 연결.
 - 시각은 UTC `yyyy-MM-dd HH:mm:ss`로 내려오며 프론트가 KST로 변환해 표시.
 
-**배포 연결:** 실 연동은 Spring 공개 URL 확정 후 결정(같은 도메인 `/api` proxy 또는 별도 도메인 + CORS).
-
 ## 구조
 
 ```
@@ -90,25 +88,25 @@ src/
 ├─ index.css                       # Tailwind 4 + 디자인 토큰(라이트/다크) + 기본 리셋
 │
 ├─ api/
-│  ├─ client.ts                    # Axios 인스턴스 + 인터셉터 (Bearer 첨부, 401 시 RTR로 토큰 재발급 후 재시도)
+│  ├─ client.ts                    # Axios 인스턴스
 │  ├─ auth.ts                      # loginRequest(POST /api/auth/login) · fetchMe(GET /api/auth/me)
 │  ├─ tokenStore.ts                # localStorage 기반 토큰·유저 정보 저장/조회
-│  └─ reports.ts                   # fetchDashboard / fetchReports / fetchReportView — 목 폴백 포함
+│  └─ reports.ts                   # fetchDashboard / fetchReports / fetchReportView
 │
-├─ mock/                           # MVP 목 데이터 (백엔드 미연결 시 폴백)
+├─ mock/                           # MVP 목 데이터
 │  ├─ reports.ts                   # MOCK_REPORTS — 리포트 목록 3건
 │  ├─ reportDetail.ts              # MOCK_REPORT_DETAIL — RCA · 근거 · 영향 · 조치
-│  └─ dashboard.ts                 # MOCK_DASHBOARD — 집계 + 최근 리포트 (MOCK_REPORTS에서 파생)
+│  └─ dashboard.ts                 # MOCK_DASHBOARD — 집계 + 최근 리포트
 │
 ├─ types/
 │  ├─ report.ts                    # Severity / ReportStatus 타입, SEVERITY_META / STATUS_META
-│  ├─ reportDetail.ts              # ReportDetail · AgentEvidence · VizData (확장판 타입 포함)
+│  ├─ reportDetail.ts              # ReportDetail · AgentEvidence · VizData
 │  └─ dashboard.ts                 # DashboardSummary · DashboardData
 │
 ├─ context/
-│  ├─ ThemeContext.tsx             # 다크 모드 상태 (localStorage 유지)
-│  ├─ AuthContext.tsx              # 로그인 상태 — 로그인 성공 후 /auth/me로 유저 정보 이어서 조회, localStorage 유지
-│  └─ ToastContext.tsx             # 하단 토스트 알림 (2.5초 자동 닫힘)
+│  ├─ ThemeContext.tsx             # 라이트/다크 모드 상태
+│  ├─ AuthContext.tsx              # 로그인 상태 — 로그인 성공 후 /auth/me로 유저 정보 조회
+│  └─ ToastContext.tsx             # 하단 토스트 알림
 │
 ├─ components/
 │  ├─ layout/
@@ -122,8 +120,6 @@ src/
 │     └─ SectionHeader.tsx        # 공통 섹션 헤더 (accent bar + 레이블)
 │
 ├─ pages/
-│  ├─ Landing/
-│  │  └─ index.tsx                # 서비스 소개 랜딩 페이지
 │  ├─ Login/
 │  │  ├─ index.tsx                # 로그인 상태 관리 + 검증 + 에러 처리
 │  │  └─ LoginForm.tsx            # 로그인 폼
@@ -140,7 +136,7 @@ src/
 │  │  ├─ ImpactTab.tsx
 │  │  ├─ ActionTab.tsx
 │  │  ├─ AgentLogTab.tsx
-│  │  └─ NotFound.tsx             # 리포트 상세 전용 404 — REPORT_NOT_FOUND(없는/미완료 id) 응답 시 표시 (index.tsx catch에서 연결됨)
+│  │  └─ NotFound.tsx             # 리포트 상세 전용 404 — REPORT_NOT_FOUND(없는/미완료 id) 응답 시 표시
 │  └─ NotFound/
 │     └─ index.tsx                # 최상위 404 — 미정의 경로 진입 시 표시
 │
@@ -179,25 +175,18 @@ src/
 | `/app/mypage` | 마이페이지 | ✅ 활성 |
 | `/app/*`, 미정의 경로 | 404 | ✅ 활성 |
 | `/login` | 로그인 | ✅ 활성 |
-| `/` (랜딩) | 서비스 소개 랜딩 페이지 | ⏸ 확장판 |
-
-## 확장판 비활성화 항목
-
-| 항목 | 파일 | 복원 방법 |
-|---|---|---|
-| 랜딩 페이지 | `src/pages/Landing/` | `App.tsx` TODO 주석 해제 |
 
 ## MVP 심각도 체계
 
-`severity`는 `HIGH/MID/LOW` 3단계. 뱃지 색으로만 구분합니다 (`status`·아이콘·confidence는 제거).
+`severity`는 `HIGH/MID/LOW` 3단계. 뱃지 색으로만 구분합니다.
 
 | 심각도 | 뱃지 색 |
 |---|---|
-| HIGH | 주황 |
+| HIGH | 빨강 |
 | MID | 노랑 |
 | LOW | 초록 |
 
-- 판정 전(LLM 미결)이면 백엔드가 `severity: null` 반환 → 현재 프론트는 `LOW`로 폴백 (중립 "미정" 뱃지 적용은 논의 중).
+- 판정 전(LLM 미결)이면 백엔드가 `severity: null` 반환 → 현재 프론트는 `LOW`로 폴백.
 
 ## 요구사항 구현 현황
 
@@ -206,6 +195,4 @@ src/
 | FR-S-04 | 리포트 조회 UI | M | ✅ 완료 |
 | FR-S-02 | 리포트 목록·상세 조회 API | M | ✅ 완료 (목 데이터 폴백) |
 | FR-A-03 | 원인·전파 복원 + 대응방안 화면 | M | ✅ 완료 |
-| FR-S-05 | 원인·전파 경로·근거 시각화 | C | ⏸ 미구현 (히트맵 방식 재설계 후 별도 구현 예정) |
 | NFR-08 | 에이전트 호출 로그·근거 출처 | 선택 | ✅ 완료 (에이전트 로그 탭) |
-| FR-S-03 | 리포트 비교·이력 조회 | C | ⏳ 보류 |
