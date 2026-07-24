@@ -8,6 +8,8 @@ import type { Report } from "../../types/report";
 import type { ReportDetail } from "../../types/reportDetail";
 import type { AgentTab } from "../../types/reportDetail";
 import SectionHeader from "../../components/ui/SectionHeader";
+import SentenceBlock from "../../components/ui/SentenceBlock";
+import PropagationChain from "../../components/ui/PropagationChain";
 import SummaryTab from "./SummaryTab";
 import CauseTab from "./CauseTab";
 import ImpactTab from "./ImpactTab";
@@ -74,14 +76,14 @@ export default function ReportDetail() {
 
       {/* 헤더 */}
       <div>
-        <div className="detail-header-meta">
+        <div className="detail-title-row">
           <span className="sev-badge" style={{ background: sev.bg, color: sev.color }}>{sev.label}</span>
+          <h1 className="detail-title">
+            [{report.type}] <span className="detail-title__service">{report.service}</span>
+          </h1>
           {/* 감지 시각 텍스트 — 주석 처리 유지
           <span className="detail-header-meta__timestamp">{report.time} KST 감지 · 분석 완료 {report.time.substring(11, 16)}</span>
           */}
-        </div>
-        <div className="detail-title-row">
-          <h1 className="detail-title">[{report.type}] {report.service}</h1>
         </div>
       </div>
 
@@ -91,11 +93,11 @@ export default function ReportDetail() {
         <div className="detail-rca__body">
           <div className="detail-rca__row">
             <span className="detail-rca__key">근본 원인</span>
-            <span className="detail-rca__rootcause">{detail.rca.rootCause}</span>
+            <SentenceBlock text={detail.rca.rootCause} className="detail-rca__rootcause" />
           </div>
           <div className="detail-rca__row">
             <span className="detail-rca__key">전파 경로</span>
-            <span className="detail-rca__propagation">{detail.rca.propagation}</span>
+            <PropagationChain text={detail.rca.propagation} />
           </div>
         </div>
       </div>

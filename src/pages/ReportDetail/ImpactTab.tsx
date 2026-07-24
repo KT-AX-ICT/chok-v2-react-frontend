@@ -1,5 +1,6 @@
 import type { ImpactMetric, AffectedService } from "../../types/reportDetail";
 import SectionHeader from "../../components/ui/SectionHeader";
+import { renderWithCode } from "../../components/ui/renderWithCode";
 
 interface Props {
   metrics: ImpactMetric[];
@@ -11,10 +12,10 @@ export default function ImpactTab({ metrics, affected }: Props) {
     <div className="screen detail-panel">
       <SectionHeader label="영향" />
       <div className="detail-impact-metrics">
-        {metrics.map((m) => (
-          <div key={m.label} className="detail-impact-metric">
+        {metrics.map((m, i) => (
+          <div key={`${m.label}-${i}`} className="detail-impact-metric">
             <div className="detail-impact-metric__label">{m.label}</div>
-            <div className="detail-impact-metric__value">{m.value}</div>
+            <div className="detail-impact-metric__value">{renderWithCode(m.value)}</div>
           </div>
         ))}
       </div>
@@ -27,8 +28,8 @@ export default function ImpactTab({ metrics, affected }: Props) {
           </tr>
         </thead>
         <tbody>
-          {affected.map((row) => (
-            <tr key={row.service} className="detail-impact-row">
+          {affected.map((row, i) => (
+            <tr key={`${row.service}-${i}`} className="detail-impact-row">
               <td className="detail-impact-td detail-impact-td--service">{row.service}</td>
               <td className="detail-impact-td detail-impact-td--errors">{row.errors}</td>
               <td className="detail-impact-td detail-impact-td--type">{row.type}</td>

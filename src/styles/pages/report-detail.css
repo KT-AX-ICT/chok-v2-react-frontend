@@ -16,20 +16,14 @@
 }
 
 /* ── 헤더 ── */
-.detail-header-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
 .detail-header-meta__timestamp {
   font: 12px system-ui;
   color: var(--text3);
 }
 .detail-title-row {
   display: flex;
-  align-items: flex-end;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 .detail-title {
@@ -37,6 +31,10 @@
   color: var(--text1);
   margin: 0;
   letter-spacing: -.03em;
+}
+.detail-title__service {
+  font-weight: 400;
+  color: var(--text2);
 }
 /* ── RCA 결론 블록 ── */
 .detail-rca {
@@ -62,12 +60,61 @@
   width: 56px;
 }
 .detail-rca__rootcause {
-  font: 700 14px/1.5 system-ui;
+  font: 400 14px/1.6 system-ui;
   color: var(--text1);
 }
-.detail-rca__propagation {
-  font: 13px/1.6 system-ui;
+/* 문장 단위 블록(SentenceBlock) 공통 — 줄바꿈 문자 대신 margin으로 문장 간 리듬을 줌 */
+.sentence-block__line {
+  margin: 0 0 8px;
+}
+.sentence-block__line:last-child {
+  margin-bottom: 0;
+}
+/* `...`로 감싼 구간 — 배경칩 없이 폰트·색만으로 구분. 내용 성격별로 색을 나눠 전부 같은 하이라이팅으로 안 보이게 */
+.inline-code {
+  font: 0.93em ui-monospace, monospace;
+}
+.inline-code--message {
+  color: var(--err-text);      /* 공백 있는 문장형 — 에러/로그 메시지 */
+}
+.inline-code--token {
+  color: var(--chip-info-text); /* 공백 없는 단일 토큰 — 식별자·경로·메트릭명 */
+}
+
+/* 전파 경로 — "A → B → C" 단계별 타임라인. 근본 원인(문장형)과 구조 자체로 구분 */
+.propagation-chain {
+  display: flex;
+  flex-direction: column;
+}
+.propagation-chain__step {
+  display: flex;
+  gap: 10px;
+}
+.propagation-chain__marker {
+  flex-shrink: 0;
+  width: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.propagation-chain__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.propagation-chain__line {
+  width: 1.5px;
+  flex: 1;
+  background: var(--border);
+  margin: 2px 0;
+}
+.propagation-chain__text {
+  font: 13px/1.5 system-ui;
   color: var(--text4);
+  padding-bottom: 10px;
 }
 
 
@@ -161,7 +208,7 @@
   border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 14px 18px;
-  font: 700 14px/1.7 system-ui;
+  font: 400 14px/1.7 system-ui;
   color: var(--text1);
   margin-bottom: 16px;
 }
@@ -183,23 +230,10 @@
   flex-direction: column;
   gap: 8px;
 }
-/* 메트릭 항목 목록 — 출처·결론(헤더)은 고정, 항목이 많아지면 이 영역만 바운드 스크롤 */
-.detail-metric-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 220px;
-  overflow: auto;
-}
-/* metric 이름은 스네이크케이스라 길다 — 공용 라벨(88px, ellipsis)과 달리 2줄 허용 */
-.detail-metric-items .detail-cause-item__label {
-  width: 160px;
-  white-space: normal;
-}
 .detail-cause-item {
   display: flex;
   gap: 12px;
-  align-items: baseline;
+  align-items: flex-start;
 }
 .detail-cause-item__label {
   flex-shrink: 0;
@@ -212,10 +246,15 @@
 }
 .detail-cause-item__value {
   font: 400 13px/1.5 system-ui;
-  color: var(--text4);
+  color: var(--text3);
 }
-.detail-cause-item__value--highlight {
-  font-weight: 700;
+/* 분석 결론 — 출처(메타 텍스트)와 구분되는 카드형 박스. 이 탭의 핵심 결과물이라 시각적으로 띄움 */
+.detail-cause-item__value--conclusion {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 14px;
   color: var(--text1);
 }
 .detail-snapshot-label {

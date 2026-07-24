@@ -7,10 +7,10 @@ export const MOCK_REPORTS: Report[] = [
   {
     id: 1,
     severity: "HIGH",
-    type: "Code_Stop",
-    service: "media-service",
-    time: `${_today} 12:00:03`,
-    summary: "media-service 코드 실행 정지 · 로그 에러 600건 (정상 대비 3배), ComposePost 연결 실패",
+    type: "Network_DNS",
+    service: "composepost",
+    time: `${_today} 07:28:00`,
+    summary: "composepost의 media-service-client 이름해석/연결 실패가 nginx↔composepost 구간 지연과 `/wrk2-api/post/compose` 500 오류로 전파된 것으로 가장 유력합니다.",
   },
   {
     id: 2,
