@@ -147,8 +147,8 @@ export default function Reports() {
         <table className="reports-table">
           <colgroup>
             <col style={{ width: "80px" }} />
-            <col style={{ width: "120px" }} />
-            <col style={{ width: "130px" }} />
+            <col style={{ width: "155px" }} />
+            <col style={{ width: "160px" }} />
             <col style={{ width: "155px" }} />
             <col />
             <col style={{ width: "72px" }} />
@@ -176,8 +176,8 @@ export default function Reports() {
                   <td className="reports-td">
                     <span className="sev-badge" style={{ background: sev.bg, color: sev.color }}>{sev.label}</span>
                   </td>
-                  <td className="reports-td reports-td--type">{r.type}</td>
-                  <td className="reports-td reports-td--service">{r.service}</td>
+                  <td className="reports-td reports-td--type" title={r.type}>{r.type}</td>
+                  <td className="reports-td reports-td--service" title={r.service}>{r.service}</td>
                   <td className="reports-td reports-td--time">{r.time}</td>
                   <td className="reports-td reports-td--summary">{r.summary}</td>
                   <td className="reports-td reports-td--action">

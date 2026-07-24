@@ -14,7 +14,7 @@
 /* ── KPI 카드 ── */
 .dashboard-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* HITL 카드 주석 처리로 4→3칸 (복원 시 4로 되돌릴 것) */
+  grid-template-columns: repeat(3, 1fr);
   gap: 12px;
 }
 .dashboard-kpi-card {
@@ -32,34 +32,6 @@
 }
 .dashboard-kpi-card__value {
   font: 800 26px system-ui;
-}
-
-/* ── HITL 알림 ── */
-.dashboard-hitl-alert {
-  background: var(--err-surface);
-  border: 1.5px solid #ea580c;
-  border-radius: 9px;
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.dashboard-hitl-alert__text {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font: 600 13px system-ui;
-  color: #c2410c;
-}
-.dashboard-hitl-alert__btn {
-  padding: 6px 16px;
-  background: #ea580c;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  font: 700 12px system-ui;
-  flex-shrink: 0;
-  cursor: pointer;
 }
 
 /* ── 최근 리포트 ── */

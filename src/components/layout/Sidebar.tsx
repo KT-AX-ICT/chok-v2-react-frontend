@@ -6,9 +6,6 @@ import ThemeToggle from "../ui/ThemeToggle";
 import { useAuth } from "../../context/AuthContext";
 import "../../styles/components/sidebar.css";
 
-// TODO: 파이프라인 상태 섹션 — 활성화 시 아래 주석 해제
-// const pipeline = ["LogRead", "FastAPI", "Spring"];
-
 export default function Sidebar() {
   const nav = useNavigate();
   const { user, signOut } = useAuth();
@@ -53,20 +50,6 @@ export default function Sidebar() {
           리포트 목록
         </NavLink>
       </nav>
-
-      {/* TODO: 파이프라인 상태 섹션 — 활성화 시 아래 주석 해제
-      <div className="sidebar__pipeline">
-        <div className="sidebar__pipeline-label">파이프라인 상태</div>
-        <div className="sidebar__pipeline-list">
-          {pipeline.map((p) => (
-            <div key={p} className="sidebar__pipeline-item">
-              <span className="sidebar__pipeline-dot" />
-              {p}
-            </div>
-          ))}
-        </div>
-      </div>
-      */}
 
       <div className="sidebar__user" ref={menuRef}>
         <div className="sidebar__user-row">

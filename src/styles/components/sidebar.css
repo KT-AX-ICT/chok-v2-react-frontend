@@ -39,38 +39,6 @@
   color: #fff;
   font-weight: 700;
 }
-.sidebar__pipeline {
-  padding: 14px 18px;
-  border-top: 1px solid var(--border);
-  flex-shrink: 0;
-}
-.sidebar__pipeline-label {
-  font: 600 10px system-ui;
-  color: var(--text2);
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  margin-bottom: 10px;
-}
-.sidebar__pipeline-list {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.sidebar__pipeline-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  font: 12px system-ui;
-  color: var(--text4);
-}
-.sidebar__pipeline-dot {
-  width: 7px;
-  height: 7px;
-  background: #22c55e;
-  border-radius: 50%;
-  display: inline-block;
-  flex-shrink: 0;
-}
 .sidebar__user {
   position: relative;
   padding: 12px 14px 14px;

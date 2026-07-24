@@ -1,3 +1,4 @@
+import axios from "axios";
 import { api } from "./client";
 import { MOCK_REPORTS } from "../mock/reports";
 import { MOCK_REPORT_DETAIL } from "../mock/reportDetail";
@@ -20,6 +21,11 @@ interface ReportListItem {
   createdAt: string;
 }
 
+// 서버 응답 자체가 없을 때(네트워크 오류)만 mock 폴백 — 4xx/5xx는 그대로 throw
+function shouldFallbackToMock(err: unknown): boolean {
+  return import.meta.env.VITE_USE_MOCK === "true" && axios.isAxiosError(err) && !err.response;
+}
+
 function severityMap(s: string | null): Severity {
   if (!s) return "LOW";
   const m: Record<string, Severity> = { HIGH: "HIGH", MID: "MID", LOW: "LOW" };
@@ -34,7 +40,6 @@ function toReport(r: ReportListItem): Report {
     type: r.type ?? "-",
     service: r.service ?? "-",
     time: utcToKst(r.detectedAt ?? r.createdAt), // 백엔드는 UTC로 내려줌 — 화면 표시는 KST
-    // status: sev === "HIGH" ? "hitl" : "auto",
     summary: r.summary ?? "",
   };
 }
@@ -106,7 +111,7 @@ export async function fetchReports(params?: FetchReportsParams): Promise<FetchRe
     const content = Array.isArray(data?.content) ? data.content : [];
     return { items: content.map(toReport), total: data?.totalElements ?? content.length };
   } catch (err) {
-    if (import.meta.env.VITE_USE_MOCK === "true") return queryMockReports(params);
+    if (shouldFallbackToMock(err)) return queryMockReports(params);
     throw err;
   }
 }
@@ -142,7 +147,7 @@ function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDet
     evidence: {
       log:    { source: ev.log?.source ?? "",    conclusion: ev.log?.conclusion ?? "",    lines: ev.log?.lines ?? [] },
       trace:  { source: ev.trace?.source ?? "",  conclusion: ev.trace?.conclusion ?? "",  spans: ev.trace?.spans ?? [] },
-      metric: { source: ev.metric?.source ?? "", conclusion: ev.metric?.conclusion ?? "", items: ev.metric?.items ?? [], snapshot: ev.metric?.snapshot ?? [] },
+      metric: { source: ev.metric?.source ?? "", conclusion: ev.metric?.conclusion ?? "", items: ev.metric?.items ?? [] },
     },
     impact: {
       metrics: d?.impact?.metrics ?? [],
@@ -161,7 +166,7 @@ export async function fetchReportView(id: number): Promise<ReportView | undefine
     const { data } = await api.get<ReportDetailEnvelope>(`/api/reports/${id}`);
     return { report: toReport(data.report), detail: normalizeDetail(data.detail) };
   } catch (err) {
-    if (import.meta.env.VITE_USE_MOCK === "true") {
+    if (shouldFallbackToMock(err)) {
       const report = MOCK_REPORTS.find((r) => r.id === id);
       return report ? { report, detail: MOCK_REPORT_DETAIL } : undefined;
     }
@@ -180,7 +185,7 @@ export async function fetchDashboard(): Promise<DashboardData> {
     const { data } = await api.get<DashboardResponseDto>("/api/dashboard");
     return { summary: data.summary, recentReports: data.recentReports.map(toReport) };
   } catch (err) {
-    if (import.meta.env.VITE_USE_MOCK === "true") return MOCK_DASHBOARD;
+    if (shouldFallbackToMock(err)) return MOCK_DASHBOARD;
     throw err;
   }
 }

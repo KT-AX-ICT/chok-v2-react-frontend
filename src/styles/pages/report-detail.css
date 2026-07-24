@@ -16,20 +16,14 @@
 }
 
 /* ── 헤더 ── */
-.detail-header-meta {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
 .detail-header-meta__timestamp {
   font: 12px system-ui;
   color: var(--text3);
 }
 .detail-title-row {
   display: flex;
-  align-items: flex-end;
-  gap: 16px;
+  align-items: center;
+  gap: 12px;
   flex-wrap: wrap;
 }
 .detail-title {
@@ -38,44 +32,10 @@
   margin: 0;
   letter-spacing: -.03em;
 }
-/* ── HITL 패널 ── */
-.detail-hitl {
-  background: var(--warn-surface);
-  border: 1.5px solid rgba(245, 158, 11, 1);
-  border-radius: 9px;
-  padding: 16px 20px;
+.detail-title__service {
+  font-weight: 400;
+  color: var(--text2);
 }
-.detail-hitl__title {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font: 700 13px system-ui;
-  color: var(--warn-text2);
-  margin-bottom: 12px;
-}
-.detail-hitl__body {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-}
-.detail-hitl__textarea {
-  flex: 1;
-  padding: 8px 10px;
-  border: 1px solid #fde68a;
-  border-radius: 6px;
-  font: 13px system-ui;
-  resize: vertical;
-  min-height: 48px;
-  background: var(--surface);
-  color: var(--text4);
-}
-.detail-hitl__actions {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
 /* ── RCA 결론 블록 ── */
 .detail-rca {
   background: var(--bg2);
@@ -100,12 +60,61 @@
   width: 56px;
 }
 .detail-rca__rootcause {
-  font: 700 14px/1.5 system-ui;
+  font: 400 14px/1.6 system-ui;
   color: var(--text1);
 }
-.detail-rca__propagation {
-  font: 13px/1.6 system-ui;
+/* 문장 단위 블록(SentenceBlock) 공통 — 줄바꿈 문자 대신 margin으로 문장 간 리듬을 줌 */
+.sentence-block__line {
+  margin: 0 0 8px;
+}
+.sentence-block__line:last-child {
+  margin-bottom: 0;
+}
+/* `...`로 감싼 구간 — 배경칩 없이 폰트·색만으로 구분. 내용 성격별로 색을 나눠 전부 같은 하이라이팅으로 안 보이게 */
+.inline-code {
+  font: 0.93em ui-monospace, monospace;
+}
+.inline-code--message {
+  color: var(--err-text);      /* 공백 있는 문장형 — 에러/로그 메시지 */
+}
+.inline-code--token {
+  color: var(--chip-info-text); /* 공백 없는 단일 토큰 — 식별자·경로·메트릭명 */
+}
+
+/* 전파 경로 — "A → B → C" 단계별 타임라인. 근본 원인(문장형)과 구조 자체로 구분 */
+.propagation-chain {
+  display: flex;
+  flex-direction: column;
+}
+.propagation-chain__step {
+  display: flex;
+  gap: 10px;
+}
+.propagation-chain__marker {
+  flex-shrink: 0;
+  width: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.propagation-chain__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.propagation-chain__line {
+  width: 1.5px;
+  flex: 1;
+  background: var(--border);
+  margin: 2px 0;
+}
+.propagation-chain__text {
+  font: 13px/1.5 system-ui;
   color: var(--text4);
+  padding-bottom: 10px;
 }
 
 
@@ -199,7 +208,7 @@
   border: 1.5px solid var(--border);
   border-radius: 8px;
   padding: 14px 18px;
-  font: 700 14px/1.7 system-ui;
+  font: 400 14px/1.7 system-ui;
   color: var(--text1);
   margin-bottom: 16px;
 }
@@ -221,18 +230,10 @@
   flex-direction: column;
   gap: 8px;
 }
-/* 메트릭 항목 목록 — 출처·결론(헤더)은 고정, 항목이 많아지면 이 영역만 바운드 스크롤 */
-.detail-metric-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 220px;
-  overflow: auto;
-}
 .detail-cause-item {
   display: flex;
   gap: 12px;
-  align-items: baseline;
+  align-items: flex-start;
 }
 .detail-cause-item__label {
   flex-shrink: 0;
@@ -245,10 +246,15 @@
 }
 .detail-cause-item__value {
   font: 400 13px/1.5 system-ui;
-  color: var(--text4);
+  color: var(--text3);
 }
-.detail-cause-item__value--highlight {
-  font-weight: 700;
+/* 분석 결론 — 출처(메타 텍스트)와 구분되는 카드형 박스. 이 탭의 핵심 결과물이라 시각적으로 띄움 */
+.detail-cause-item__value--conclusion {
+  flex: 1;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 10px 14px;
   color: var(--text1);
 }
 .detail-snapshot-label {
@@ -270,7 +276,11 @@
   align-items: flex-start;   /* 자식이 컨테이너 폭에 안 갇히고 내용 폭까지 늘어나 가로 스크롤 가능 */
   max-height: 260px;         /* raw 데이터 길어지면 영역 고정 후 세로 스크롤 */
   overflow: auto;            /* 세로 + 가로 스크롤 */
+  scrollbar-width: thin;     /* OS 기본(스크롤 중에만 표시)이면 가로 스크롤 가능한지 안 보임 — 항상 얇게 표시 */
 }
+.detail-snapshot::-webkit-scrollbar { height: 8px; width: 8px; }
+.detail-snapshot::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.detail-snapshot::-webkit-scrollbar-track { background: transparent; }
 .detail-snapshot__line {
   margin: 0 -14px;
   padding: 1px 14px;
@@ -290,25 +300,28 @@
 /* ── 영향 탭 ── */
 .detail-impact-metrics {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
 .detail-impact-metric {
-  background: var(--err-surface);
-  border: 1px solid #fecaca;
-  border-radius: 8px;
-  padding: 14px;
-  text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid #ef4444;
+  border-radius: 6px;
+  padding: 10px 12px;
 }
 .detail-impact-metric__label {
-  font: 11px system-ui;
-  color: var(--text2);
-  margin-bottom: 6px;
+  font: 700 10px system-ui;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--text3);
+  margin-bottom: 5px;
 }
 .detail-impact-metric__value {
-  font: 800 24px system-ui;
-  color: #ef4444;
+  font: 400 12.5px/1.55 ui-monospace, monospace;
+  color: var(--text4);
+  word-break: break-word;
 }
 .detail-impact-table {
   width: 100%;
@@ -346,180 +359,7 @@
   border-bottom: none;
 }
 
-/* ── 시각화 탭 ── */
-.viz-tab {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-.viz-section__title {
-  font: 700 13px system-ui;
-  color: var(--text1);
-  margin-bottom: 12px;
-}
-.viz-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 16px;
-}
-.viz-card--pad20 {
-  padding: 20px;
-}
-.viz-ticks {
-  display: flex;
-  margin-left: 116px;
-  margin-bottom: 6px;
-}
-.viz-ticks--heat {
-  margin-bottom: 5px;
-  margin-left: 116px;
-}
-.viz-tick {
-  flex: 1;
-  font: 10px system-ui;
-  color: var(--text3);
-}
-.viz-tick--active {
-  font-weight: 700;
-  color: var(--text2);
-}
-.viz-rows {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.viz-rows--heat {
-  gap: 4px;
-}
-.viz-row {
-  display: flex;
-  align-items: center;
-}
-.viz-label {
-  width: 116px;
-  font: 400 11px system-ui;
-  color: var(--text4);
-  flex-shrink: 0;
-}
-.viz-label--bold {
-  font-weight: 700;
-}
-.viz-label--error {
-  color: #ef4444;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-.viz-bar {
-  flex: 1;
-  height: 22px;
-  background: var(--bg2);
-  border-radius: 4px;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-.viz-bar--error {
-  background: var(--chip-error);
-  border: 1.5px solid #fca5a5;
-}
-.viz-bar__fill {
-  position: absolute;
-  height: 100%;
-  background: var(--chip-error);
-}
-.viz-bar__tick {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: #ef4444;
-}
-.viz-bar__badge {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font: 700 10px system-ui;
-  color: #ef4444;
-}
-.viz-bar__event {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 2;
-  border: 1.5px solid #fff;
-  cursor: default;
-}
-.viz-bar__event--log {
-  background: #ef4444;
-}
-.viz-bar__event--trace {
-  background: #3b82f6;
-}
-.viz-legend {
-  display: flex;
-  gap: 14px;
-  margin-top: 10px;
-}
-.viz-legend__item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font: 11px system-ui;
-  color: var(--text2);
-}
-.viz-legend__swatch {
-  width: 12px;
-  height: 10px;
-  border-radius: 2px;
-  display: inline-block;
-  background: var(--chip-error);
-}
-.viz-graph-wrap {
-  height: 260px;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: var(--bg2);
-}
-.viz-graph-wrap .react-flow__background {
-  background: var(--bg2);
-}
-.viz-graph-wrap .react-flow__pane {
-  cursor: default;
-}
-.viz-heat-grid {
-  flex: 1;
-  display: grid;
-  /* grid-template-columns은 VizTab에서 동적으로 주입 */
-  gap: 4px;
-}
-.viz-heat-cell {
-  height: 22px;
-  border-radius: 3px;
-}
-.viz-heat-legend {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-.viz-heat-legend__swatch {
-  width: 16px;
-  height: 11px;
-  border-radius: 2px;
-}
-.viz-heat-legend__label {
-  font: 10px system-ui;
-  color: var(--text3);
-}
-
-/* ── 에러 상태 (404, 구현만 해두고 미연결) ── */
+/* ── 에러 상태 (404, REPORT_NOT_FOUND 응답 시 표시) ── */
 .detail-error {
   display: flex;
   flex-direction: column;

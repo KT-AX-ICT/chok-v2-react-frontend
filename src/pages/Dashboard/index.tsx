@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { AlertTriangle } from "lucide-react"; // HITL 확장 방향 보류 — 주석 해제 후 사용
 import { fetchDashboard } from "../../api/reports";
 import { SEVERITY_META } from "../../types/report";
 import type { Report } from "../../types/report";
@@ -33,8 +32,6 @@ export default function Dashboard() {
   const kpiItems = [
     { label: "전체 리포트",    value: summary.total,      color: "var(--text1)" },
     { label: "HIGH 이상",      value: summary.highCount,  color: "#ef4444" },
-    // TODO: HITL 확장 방향 보류 — 주석 해제 후 사용
-    // { label: "HITL 승인 대기", value: summary.hitlCount,  color: "#f97316" },
     { label: "오늘 발생",      value: summary.todayCount, color: "var(--brand)" },
   ];
 
@@ -51,20 +48,6 @@ export default function Dashboard() {
           </div>
         ))}
       </div>
-
-      {/* TODO: HITL 알림 — 확장 방향 보류, ReportDetail HITL 패널과 함께 주석 해제
-      {recentReports.filter((r) => r.status === "hitl").map((r) => (
-        <div key={r.id} className="dashboard-hitl-alert">
-          <span className="dashboard-hitl-alert__text">
-            <AlertTriangle size={15} />
-            [{r.type}] {r.service} — {r.time} KST — 승인 대기
-          </span>
-          <button onClick={() => nav(`/app/reports/${r.id}`)} className="dashboard-hitl-alert__btn">
-            상세보기
-          </button>
-        </div>
-      ))}
-      */}
 
       {/* 최근 리포트 */}
       <div className="dashboard-recent">

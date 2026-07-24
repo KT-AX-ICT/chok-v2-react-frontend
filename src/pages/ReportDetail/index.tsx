@@ -1,27 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-// import { AlertTriangle, Check, X } from "lucide-react"; // HITL UI — 주석 해제 후 사용
 import { fetchReportView } from "../../api/reports";
+import type { ApiErrorResponse } from "../../api/client";
 import { SEVERITY_META } from "../../types/report";
 import type { Report } from "../../types/report";
 import type { ReportDetail } from "../../types/reportDetail";
 import type { AgentTab } from "../../types/reportDetail";
-// TODO: 시각화 탭 — 히트맵 재설계 후 주석 해제
-// import VizTab from "./VizTab";
 import SectionHeader from "../../components/ui/SectionHeader";
+import SentenceBlock from "../../components/ui/SentenceBlock";
+import PropagationChain from "../../components/ui/PropagationChain";
 import SummaryTab from "./SummaryTab";
 import CauseTab from "./CauseTab";
 import ImpactTab from "./ImpactTab";
 import ActionTab from "./ActionTab";
 // import AgentLogTab from "./AgentLogTab"; // 후순위 — 에이전트 로그 탭 비활성화
 import NotFound from "./NotFound";
-// import { validateHITLAction } from "../../utils/validateMessages";     // HITL
-// import { handleHITLApprove, handleHITLReject } from "../../utils/eventHandlers"; // HITL
 import "../../styles/pages/report-detail.css";
 
 type Tab = "요약" | "원인" | "영향" | "조치";
-// TODO: 시각화 탭 — 히트맵 재설계 후 "시각화" 추가
 const TABS: Tab[] = ["요약", "원인", "영향", "조치"];
 
 export default function ReportDetail() {
@@ -48,8 +45,11 @@ export default function ReportDetail() {
       })
       .catch((err) => {
         if (ignore) return;
-        // REPORT_NOT_FOUND 공통 에러(404)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
-        if (axios.isAxiosError(err) && err.response?.status === 404) {
+        // REPORT_NOT_FOUND 공통 에러(404 + error.code)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
+        const code = axios.isAxiosError(err)
+          ? (err.response?.data as ApiErrorResponse | undefined)?.error?.code
+          : undefined;
+        if (axios.isAxiosError(err) && err.response?.status === 404 && code === "REPORT_NOT_FOUND") {
           setNotFound(true);
         } else {
           nav("/app/reports", { replace: true });
@@ -76,24 +76,16 @@ export default function ReportDetail() {
 
       {/* 헤더 */}
       <div>
-        <div className="detail-header-meta">
+        <div className="detail-title-row">
           <span className="sev-badge" style={{ background: sev.bg, color: sev.color }}>{sev.label}</span>
+          <h1 className="detail-title">
+            [{report.type}] <span className="detail-title__service">{report.service}</span>
+          </h1>
           {/* 감지 시각 텍스트 — 주석 처리 유지
           <span className="detail-header-meta__timestamp">{report.time} KST 감지 · 분석 완료 {report.time.substring(11, 16)}</span>
           */}
         </div>
-        <div className="detail-title-row">
-          <h1 className="detail-title">[{report.type}] {report.service}</h1>
-        </div>
       </div>
-
-      {/* TODO: HITL 패널 — 확장 방향 확정 후 주석 해제 및 API 연동
-      {showHitl && (
-        <div className="detail-hitl">
-          ...승인/거절 UI...
-        </div>
-      )}
-      */}
 
       {/* RCA 결론 블록 */}
       <div className="detail-rca">
@@ -101,11 +93,11 @@ export default function ReportDetail() {
         <div className="detail-rca__body">
           <div className="detail-rca__row">
             <span className="detail-rca__key">근본 원인</span>
-            <span className="detail-rca__rootcause">{detail.rca.rootCause}</span>
+            <SentenceBlock text={detail.rca.rootCause} className="detail-rca__rootcause" />
           </div>
           <div className="detail-rca__row">
             <span className="detail-rca__key">전파 경로</span>
-            <span className="detail-rca__propagation">{detail.rca.propagation}</span>
+            <PropagationChain text={detail.rca.propagation} />
           </div>
         </div>
       </div>
@@ -131,8 +123,6 @@ export default function ReportDetail() {
       {tab === "원인"          && <CauseTab agentTab={agentTab} evidence={detail.evidence} onAgentTabChange={setAgentTab} />}
       {tab === "영향"          && <ImpactTab metrics={detail.impact.metrics} affected={detail.impact.affected} />}
       {tab === "조치"          && <ActionTab steps={detail.actions.steps} recovery={detail.actions.recovery} />}
-      {/* TODO: 시각화 탭 — 히트맵 재설계 후 주석 해제
-      {tab === "시각화" && <VizTab viz={detail.viz} />} */}
       {/* {tab === "에이전트 로그" && <AgentLogTab agentLog={detail.agentLog} />} */}
     </div>
   );
