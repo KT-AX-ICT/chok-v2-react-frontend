@@ -19,8 +19,8 @@ export interface SeverityMeta {
 
 export const SEVERITY_META: Record<Severity, SeverityMeta> = {
   HIGH: { label: "HIGH", bg: "var(--chip-error)", color: "var(--chip-error-text)", border: "#ef4444" },
-  MID:  { label: "MID",  bg: "#fef3c7", color: "#b45309", border: "#d97706" },
-  LOW:  { label: "LOW",  bg: "var(--chip-success)", color: "#16a34a", border: "#22c55e" },
+  MID:  { label: "MID",  bg: "var(--chip-warn)", color: "var(--chip-warn-text)", border: "#d97706" },
+  LOW:  { label: "LOW",  bg: "var(--chip-success)", color: "var(--chip-success-text)", border: "#22c55e" },
 };
 
 export const SEVERITY_ORDER: Record<Severity, number> = {

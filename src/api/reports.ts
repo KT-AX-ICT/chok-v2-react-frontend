@@ -9,8 +9,7 @@ import type { ReportDetail, EvidenceData } from "../types/reportDetail";
 import type { DashboardData, DashboardSummary } from "../types/dashboard";
 import { utcToKst } from "../utils/dateUtils";
 
-// Spring ReportListItem (api-spec §2, web/dto/ReportListItem.java) — Reports 목록 · Dashboard recentReports 공용.
-// type·service·severity는 분석/판정 전이면 null (백엔드 원천 미확정, Q-007).
+// Reports 목록·Dashboard recentReports 공용. type/service/severity는 판정 전이면 null.
 interface ReportListItem {
   id: number;
   type: string | null;
@@ -44,8 +43,7 @@ function toReport(r: ReportListItem): Report {
   };
 }
 
-// 백엔드 Pageable sort 포맷("field,direction", 화이트리스트: createdAt·severity·detectedAt)에 맞춘 매핑.
-// "latest"는 화이트리스트에 없는 값이라 그대로 보내면 서버가 조용히 기본값(createdAt desc)으로 폴백한다.
+// 백엔드 sort 포맷("field,direction")으로 매핑. "latest"는 화이트리스트에 없어 그대로 보내면 안 됨.
 const SORT_PARAM: Record<NonNullable<FetchReportsParams["sort"]>, string> = {
   latest: "createdAt,desc",
   severity: "severity,asc",
@@ -66,7 +64,6 @@ export interface FetchReportsResult {
   total: number;
 }
 
-// Spring Page 포맷 (web/dto/PageResponse.java) — content는 ReportListItem[].
 interface ReportPage {
   content: ReportListItem[];
   totalElements: number;
@@ -74,8 +71,7 @@ interface ReportPage {
   page: number;
 }
 
-// mock 폴백도 실제 API처럼 severity/from/to/search/sort/page/size를 전부 반영해서
-// 응답한다 — 그래야 나중에 실 API로 교체할 때 Reports 화면 쪽 코드를 다시 안 건드려도 됨.
+// mock 폴백도 실 API처럼 필터/정렬/페이지를 전부 반영
 function queryMockReports(params?: FetchReportsParams): FetchReportsResult {
   let list = MOCK_REPORTS;
   if (params?.severity) list = list.filter((r) => r.severity === params.severity);
@@ -100,11 +96,10 @@ function queryMockReports(params?: FetchReportsParams): FetchReportsResult {
 
 export async function fetchReports(params?: FetchReportsParams): Promise<FetchReportsResult> {
   try {
-    // 서버는 Spring Page 포맷({ content, totalElements, ... })으로 응답 — 총 건수는 totalElements를 씀
     const { data } = await api.get<ReportPage>("/api/reports", {
       params: {
         ...params,
-        severity: params?.severity?.toUpperCase(), // 백엔드는 HIGH/MID/LOW 대문자로 저장·비교
+        severity: params?.severity?.toUpperCase(), // 백엔드는 대문자로 저장·비교
         sort: params?.sort ? SORT_PARAM[params.sort] : undefined,
       },
     });
@@ -117,20 +112,18 @@ export async function fetchReports(params?: FetchReportsParams): Promise<FetchRe
 }
 
 export interface ReportView {
-  report: Report;        // 헤더용 (심각도 뱃지·제목·시각 등)
-  detail: ReportDetail;  // 탭 본문용 (rca·evidence·impact·actions 등)
+  report: Report;
+  detail: ReportDetail;
 }
 
-// Spring ReportDetailResponse (web/dto/ReportDetailResponse.java) — {report, counts, detail} 3단 봉투.
-// counts·windowStart/End·trigger_info는 응답엔 있지만 화면이 안 써서 타입에서 제외.
-// detail은 result JSON 패스스루 — 내부 필드가 api-spec §2상 optional(LLM 미충족 시 생략)이라 Partial로 받는다.
+// {report, counts, detail} 3단 봉투. counts 등 화면 미사용 필드는 타입에서 제외.
+// detail 필드는 LLM 미충족 시 생략될 수 있어 Partial로 받음.
 interface ReportDetailEnvelope {
   report: ReportListItem;
   detail: Partial<ReportDetail> | null;
 }
 
-// detail 정규화 — 백엔드가 optional 필드를 생략해도 화면(탭 컴포넌트)이 방어 없이 .map 하므로,
-// 경계에서 누락 배열·객체를 기본값으로 채워 크래시를 막는다. (api-spec §2 "프론트는 생략 렌더")
+// 생략된 필드를 기본값으로 채워, 탭 컴포넌트의 방어 없는 .map에서 크래시 방지
 function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDetail {
   const ev = (d?.evidence ?? {}) as Partial<EvidenceData>;
   return {
@@ -160,7 +153,6 @@ function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDet
   };
 }
 
-// GET /api/reports/{id} — {report, counts, detail} 봉투를 벗겨 헤더(report)/본문(detail)으로 분리.
 export async function fetchReportView(id: number): Promise<ReportView | undefined> {
   try {
     const { data } = await api.get<ReportDetailEnvelope>(`/api/reports/${id}`);
@@ -174,7 +166,7 @@ export async function fetchReportView(id: number): Promise<ReportView | undefine
   }
 }
 
-// Spring DashboardResponse — summary는 DashboardSummary와 동일 모양, recentReports만 화면과 다름(ReportListItem).
+// summary는 DashboardSummary와 동일, recentReports만 ReportListItem
 interface DashboardResponseDto {
   summary: DashboardSummary;
   recentReports: ReportListItem[];

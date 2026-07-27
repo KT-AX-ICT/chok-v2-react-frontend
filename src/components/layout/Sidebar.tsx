@@ -30,7 +30,7 @@ export default function Sidebar() {
   return (
     <div className="sidebar">
       <div className="sidebar__logo">
-        <Logo />
+        <Logo onClick={() => nav("/app/dashboard")} />
       </div>
 
       <nav className="sidebar__nav">

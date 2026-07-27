@@ -14,7 +14,6 @@ import SummaryTab from "./SummaryTab";
 import CauseTab from "./CauseTab";
 import ImpactTab from "./ImpactTab";
 import ActionTab from "./ActionTab";
-// import AgentLogTab from "./AgentLogTab"; // 후순위 — 에이전트 로그 탭 비활성화
 import NotFound from "./NotFound";
 import "../../styles/pages/report-detail.css";
 
@@ -38,14 +37,14 @@ export default function ReportDetail() {
     fetchReportView(numId)
       .then((view) => {
         if (ignore) return;
-        // 없는 id 또는 미완료(DONE 아님) id — mock 폴백은 undefined로 동일하게 표현
+        // 없는/미완료 id — mock도 undefined로 동일 처리
         if (!view) { setNotFound(true); return; }
         setReport(view.report);
         setDetail(view.detail);
       })
       .catch((err) => {
         if (ignore) return;
-        // REPORT_NOT_FOUND 공통 에러(404 + error.code)만 NotFound로 연결 — 그 외 에러는 기존대로 목록으로 리다이렉트
+        // REPORT_NOT_FOUND만 NotFound로, 나머지는 목록 리다이렉트
         const code = axios.isAxiosError(err)
           ? (err.response?.data as ApiErrorResponse | undefined)?.error?.code
           : undefined;
@@ -71,7 +70,9 @@ export default function ReportDetail() {
     <div className="screen detail-page">
       {/* 브레드크럼 */}
       <div className="detail-breadcrumb">
-        <button type="button" onClick={() => nav("/app/reports")}>리포트 목록</button> &gt; 상세
+        <button type="button" className="detail-breadcrumb__link" onClick={() => nav("/app/reports")}>리포트 목록</button>
+        <span className="detail-breadcrumb__sep">&gt;</span>
+        <span className="detail-breadcrumb__current">상세</span>
       </div>
 
       {/* 헤더 */}
@@ -102,28 +103,28 @@ export default function ReportDetail() {
         </div>
       </div>
 
-      {/* 탭 네비 */}
-      <div className="detail-tabs" role="tablist">
-        {TABS.map((t) => (
-          <button
-            key={t}
-            type="button"
-            role="tab"
-            aria-selected={tab === t}
-            onClick={() => setTab(t)}
-            className={`detail-tab${tab === t ? " detail-tab--active" : ""}`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
+      {/* 탭 + 본문 패널 — 한 덩어리로 붙여 표시 */}
+      <div className="detail-body">
+        <div className="detail-tabs" role="tablist">
+          {TABS.map((t) => (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={tab === t}
+              onClick={() => setTab(t)}
+              className={`detail-tab${tab === t ? " detail-tab--active" : ""}`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
 
-      {/* 탭 패널 */}
-      {tab === "요약"          && <SummaryTab summary={detail.summary} />}
-      {tab === "원인"          && <CauseTab agentTab={agentTab} evidence={detail.evidence} onAgentTabChange={setAgentTab} />}
-      {tab === "영향"          && <ImpactTab metrics={detail.impact.metrics} affected={detail.impact.affected} />}
-      {tab === "조치"          && <ActionTab steps={detail.actions.steps} recovery={detail.actions.recovery} />}
-      {/* {tab === "에이전트 로그" && <AgentLogTab agentLog={detail.agentLog} />} */}
+        {tab === "요약"          && <SummaryTab summary={detail.summary} />}
+        {tab === "원인"          && <CauseTab agentTab={agentTab} evidence={detail.evidence} onAgentTabChange={setAgentTab} />}
+        {tab === "영향"          && <ImpactTab metrics={detail.impact.metrics} affected={detail.impact.affected} />}
+        {tab === "조치"          && <ActionTab steps={detail.actions.steps} recovery={detail.actions.recovery} />}
+      </div>
     </div>
   );
 }
