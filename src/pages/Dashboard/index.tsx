@@ -31,7 +31,7 @@ export default function Dashboard() {
 
   const kpiItems = [
     { label: "전체 리포트",    value: summary.total,      color: "var(--text1)" },
-    { label: "HIGH 이상",      value: summary.highCount,  color: "#ef4444" },
+    { label: "HIGH 이상",      value: summary.highCount,  color: "var(--err-text)" },
     { label: "오늘 발생",      value: summary.todayCount, color: "var(--brand)" },
   ];
 

@@ -4,7 +4,7 @@ interface Props {
   text: string;
 }
 
-// "A → B → C" 형태 전파 경로를 단계별 타임라인으로 렌더링 — 근본 원인(문장형)과 구조 자체를 다르게 함
+// 전파 경로를 단계별 타임라인으로 렌더링
 export default function PropagationChain({ text }: Props) {
   const steps = text.split(/\s*→\s*/).filter(Boolean);
   return (

@@ -1,6 +1,6 @@
 import { splitByBacktick } from "../../utils/textUtils";
 
-// `...` 구간을 인라인 코드로 렌더링 — message(문장형)/token(식별자) 성격별로 색 다르게
+// 백틱 구간을 성격별 색상의 인라인 코드로 렌더링
 export function renderWithCode(text: string) {
   return splitByBacktick(text).map((seg, i) =>
     seg.code

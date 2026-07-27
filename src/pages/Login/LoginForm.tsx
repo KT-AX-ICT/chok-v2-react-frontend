@@ -14,7 +14,7 @@ interface Props {
   onSubmit: (e: React.FormEvent) => void;
 }
 
-const errStyle = { font: "12px system-ui", color: "#ef4444" } as const;
+const errStyle = { font: "12px system-ui", color: "var(--err-text)" } as const;
 
 export default function LoginForm({
   email, password, loading, emailError, passwordError, formError,

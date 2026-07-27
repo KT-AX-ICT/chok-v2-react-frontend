@@ -130,7 +130,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ef4444;
+  color: var(--chip-error-text);
   margin-bottom: 14px;
 }
 .landing-problem-card__title {
@@ -166,8 +166,8 @@
   align-items: center;
   gap: 4px;
   padding: 3px 9px;
-  background: #fff7ed;
-  color: #f97316;
+  background: var(--chip-warn);
+  color: var(--chip-warn-text);
   border-radius: 4px;
   font: 700 11px system-ui;
   margin-left: auto;

@@ -9,10 +9,21 @@
   font: 12px system-ui;
   color: var(--text3);
 }
-.detail-breadcrumb :is(a) {
+.detail-breadcrumb__link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
   color: var(--brand);
-  text-decoration: none;
   cursor: pointer;
+}
+.detail-breadcrumb__sep {
+  margin: 0 4px;
+}
+/* 현재 위치 강조 */
+.detail-breadcrumb__current {
+  color: var(--text1);
+  font-weight: 600;
 }
 
 /* ── 헤더 ── */
@@ -63,25 +74,25 @@
   font: 400 14px/1.6 system-ui;
   color: var(--text1);
 }
-/* 문장 단위 블록(SentenceBlock) 공통 — 줄바꿈 문자 대신 margin으로 문장 간 리듬을 줌 */
+/* SentenceBlock 공통 — 문장 간 margin 리듬 */
 .sentence-block__line {
   margin: 0 0 8px;
 }
 .sentence-block__line:last-child {
   margin-bottom: 0;
 }
-/* `...`로 감싼 구간 — 배경칩 없이 폰트·색만으로 구분. 내용 성격별로 색을 나눠 전부 같은 하이라이팅으로 안 보이게 */
+/* 백틱 구간 — 배경 없이 폰트·색으로만 구분 */
 .inline-code {
   font: 0.93em ui-monospace, monospace;
 }
 .inline-code--message {
-  color: var(--err-text);      /* 공백 있는 문장형 — 에러/로그 메시지 */
+  color: var(--err-text); /* 문장형 메시지 */
 }
 .inline-code--token {
-  color: var(--chip-info-text); /* 공백 없는 단일 토큰 — 식별자·경로·메트릭명 */
+  color: var(--chip-info-text); /* 단일 토큰 */
 }
 
-/* 전파 경로 — "A → B → C" 단계별 타임라인. 근본 원인(문장형)과 구조 자체로 구분 */
+/* 전파 경로 타임라인 */
 .propagation-chain {
   display: flex;
   flex-direction: column;
@@ -117,8 +128,11 @@
   padding-bottom: 10px;
 }
 
-
-/* ── 탭 ── */
+/* ── 탭 + 본문 패널을 한 덩어리로 (gap 없이 붙임) ── */
+.detail-body {
+  display: flex;
+  flex-direction: column;
+}
 .detail-tabs {
   display: flex;
   background: var(--surface);
@@ -140,7 +154,6 @@
   font-weight: 700;
   color: var(--brand);
   border-bottom-color: var(--brand);
-  margin-bottom: -1px;
 }
 .detail-panel {
   background: var(--surface);
@@ -241,14 +254,14 @@
   color: var(--text3);
   width: 88px;
   white-space: nowrap;
-  overflow: hidden;          /* 라벨이 88px 넘어도 값과 겹치지 않게 */
-  text-overflow: ellipsis;   /* 넘치면 … 로 잘라 표시 (전체는 title hover) */
+  overflow: hidden;        /* 값과 안 겹치게 */
+  text-overflow: ellipsis; /* 전체는 title hover */
 }
 .detail-cause-item__value {
   font: 400 13px/1.5 system-ui;
   color: var(--text3);
 }
-/* 분석 결론 — 출처(메타 텍스트)와 구분되는 카드형 박스. 이 탭의 핵심 결과물이라 시각적으로 띄움 */
+/* 출처와 구분되는 카드형 박스 */
 .detail-cause-item__value--conclusion {
   flex: 1;
   background: var(--bg2);
@@ -273,10 +286,10 @@
   color: var(--text4);
   display: flex;
   flex-direction: column;
-  align-items: flex-start;   /* 자식이 컨테이너 폭에 안 갇히고 내용 폭까지 늘어나 가로 스크롤 가능 */
-  max-height: 260px;         /* raw 데이터 길어지면 영역 고정 후 세로 스크롤 */
-  overflow: auto;            /* 세로 + 가로 스크롤 */
-  scrollbar-width: thin;     /* OS 기본(스크롤 중에만 표시)이면 가로 스크롤 가능한지 안 보임 — 항상 얇게 표시 */
+  align-items: flex-start; /* 가로 스크롤 가능하게 */
+  max-height: 260px;       /* 길면 세로 스크롤 */
+  overflow: auto;
+  scrollbar-width: thin;   /* 항상 얇게 표시 */
 }
 .detail-snapshot::-webkit-scrollbar { height: 8px; width: 8px; }
 .detail-snapshot::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
@@ -284,17 +297,17 @@
 .detail-snapshot__line {
   margin: 0 -14px;
   padding: 1px 14px;
-  white-space: nowrap;       /* 긴 줄은 줄바꿈 대신 가로 스크롤 */
-  min-width: 100%;           /* 짧은 줄도 폭 꽉 채워 하이라이트 배경이 전체 폭에 */
+  white-space: nowrap;  /* 가로 스크롤 */
+  min-width: 100%;      /* 하이라이트 배경 전체 폭 */
   box-sizing: border-box;
 }
 .detail-snapshot__line--error {
   background: var(--chip-error);
-  color: #ef4444;
+  color: var(--chip-error-text);
 }
 .detail-snapshot__line--warn {
   background: var(--chip-amber);
-  color: #92400e;
+  color: var(--warn-text2);
 }
 
 /* ── 영향 탭 ── */
@@ -346,7 +359,7 @@
   font-weight: 600;
 }
 .detail-impact-td--errors {
-  color: #ef4444;
+  color: var(--err-text);
   font-weight: 700;
 }
 .detail-impact-td--type {
@@ -370,7 +383,7 @@
   text-align: center;
 }
 .detail-error__icon {
-  color: #ef4444;
+  color: var(--err-text);
 }
 .detail-error__title {
   font: 800 17px system-ui;
@@ -426,5 +439,5 @@
   border-radius: 7px;
   padding: 10px 16px;
   font: 13px system-ui;
-  color: #ef4444;
+  color: var(--err-text);
 }
