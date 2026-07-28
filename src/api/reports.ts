@@ -144,7 +144,7 @@ function normalizeDetail(d: Partial<ReportDetail> | null | undefined): ReportDet
     },
     impact: {
       metrics: d?.impact?.metrics ?? [],
-      affected: d?.impact?.affected ?? [],
+      affected: (d?.impact?.affected ?? []).map((a) => ({ ...a, errors: a.errors ?? 0 })),
     },
     actions: {
       steps: d?.actions?.steps ?? [],

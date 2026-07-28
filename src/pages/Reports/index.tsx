@@ -3,41 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { fetchReports } from "../../api/reports";
 import { SEVERITY_META } from "../../types/report";
 import type { Report, Severity } from "../../types/report";
+import { useReportsFilter } from "../../context/ReportsFilterContext";
 import { handleSeverityFilter, handleSearch, handleSort } from "../../utils/eventHandlers";
-import { toLocalDateStr } from "../../utils/dateUtils";
 import "../../styles/pages/reports.css";
 
 const VALID_FILTERS = new Set(["all", "HIGH", "MID", "LOW"]);
 const VALID_SORTS = new Set(["latest", "severity"]);
 const VALID_PAGE_SIZES = new Set(["5", "10", "20"]);
 
-const DEFAULTS = {
-  filter: "all" as "all" | Severity,
-  sort: "latest" as "latest" | "severity",
-  pageSize: 10,
-  page: 1,
-  search: "",
-};
-
-function initDateRange() {
-  const today = new Date();
-  const weekAgo = new Date(today);
-  weekAgo.setDate(today.getDate() - 7);
-  return { from: toLocalDateStr(weekAgo), to: toLocalDateStr(today) };
-}
-
 export default function Reports() {
   const nav = useNavigate();
   const [items, setItems] = useState<Report[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | Severity>(DEFAULTS.filter);
-  const [sort, setSort] = useState<"latest" | "severity">(DEFAULTS.sort);
-  const [pageSize, setPageSize] = useState(DEFAULTS.pageSize);
-  const [page, setPage] = useState(DEFAULTS.page);
-  const [from, setFrom] = useState(() => initDateRange().from);
-  const [to, setTo] = useState(() => initDateRange().to);
-  const [search, setSearch] = useState(DEFAULTS.search);
+  const {
+    filter, sort, pageSize, page, from, to, search,
+    setFilter, setSort, setPageSize, setPage, setFrom, setTo, setSearch, resetFilters,
+  } = useReportsFilter();
 
   useEffect(() => {
     let ignore = false;
@@ -59,17 +41,6 @@ export default function Reports() {
   }, [page, pageSize, filter, from, to, search, sort]);
 
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
-
-  const resetFilters = () => {
-    const { from: initFrom, to: initTo } = initDateRange();
-    setFilter(DEFAULTS.filter);
-    setSort(DEFAULTS.sort);
-    setPageSize(DEFAULTS.pageSize);
-    setPage(DEFAULTS.page);
-    setFrom(initFrom);
-    setTo(initTo);
-    setSearch(DEFAULTS.search);
-  };
 
   return (
     <div className="screen reports-page">
