@@ -1,86 +1,25 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { fetchReports } from "../../api/reports";
 import { SEVERITY_META } from "../../types/report";
 import type { Report, Severity } from "../../types/report";
+import { useReportsFilter } from "../../context/ReportsFilterContext";
 import { handleSeverityFilter, handleSearch, handleSort } from "../../utils/eventHandlers";
-import { toLocalDateStr } from "../../utils/dateUtils";
 import "../../styles/pages/reports.css";
 
 const VALID_FILTERS = new Set(["all", "HIGH", "MID", "LOW"]);
 const VALID_SORTS = new Set(["latest", "severity"]);
 const VALID_PAGE_SIZES = new Set(["5", "10", "20"]);
 
-const DEFAULTS = {
-  filter: "all" as "all" | Severity,
-  sort: "latest" as "latest" | "severity",
-  pageSize: 10,
-  page: 1,
-  search: "",
-};
-
-function initDateRange() {
-  const today = new Date();
-  const weekAgo = new Date(today);
-  weekAgo.setDate(today.getDate() - 7);
-  return { from: toLocalDateStr(weekAgo), to: toLocalDateStr(today) };
-}
-
-// 목록<->상세 이동 후에도 필터 유지되도록 상태를 URL 쿼리스트링에 둔다
-type FilterUpdate = Partial<{
-  filter: "all" | Severity;
-  sort: "latest" | "severity";
-  pageSize: number;
-  page: number;
-  from: string;
-  to: string;
-  search: string;
-}>;
-
-// setSearchParams 중복 호출 시 덮어써지는 문제 방지 위해 필터 변경 + page 리셋을 한 번에 처리
-function updateFilters(
-  setSearchParams: (updater: (prev: URLSearchParams) => URLSearchParams) => void,
-  updates: FilterUpdate,
-) {
-  setSearchParams((prev) => {
-    const next = new URLSearchParams(prev);
-    const setOrDefault = (key: string, value: string | number, defaultValue: string | number) => {
-      if (value === defaultValue || value === "") next.delete(key);
-      else next.set(key, String(value));
-    };
-    if (updates.filter !== undefined) setOrDefault("filter", updates.filter, DEFAULTS.filter);
-    if (updates.sort !== undefined) setOrDefault("sort", updates.sort, DEFAULTS.sort);
-    if (updates.pageSize !== undefined) setOrDefault("pageSize", updates.pageSize, DEFAULTS.pageSize);
-    if (updates.from !== undefined) next.set("from", updates.from);
-    if (updates.to !== undefined) next.set("to", updates.to);
-    if (updates.search !== undefined) setOrDefault("search", updates.search, DEFAULTS.search);
-    // page를 명시하지 않은 변경(필터·검색·정렬·기간)은 항상 1페이지로 리셋
-    if (updates.page !== undefined) setOrDefault("page", updates.page, DEFAULTS.page);
-    else next.delete("page");
-    return next;
-  });
-}
-
 export default function Reports() {
   const nav = useNavigate();
   const [items, setItems] = useState<Report[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const filterParam = searchParams.get("filter") ?? DEFAULTS.filter;
-  const filter = (VALID_FILTERS.has(filterParam) ? filterParam : DEFAULTS.filter) as "all" | Severity;
-  const sortParam = searchParams.get("sort") ?? DEFAULTS.sort;
-  const sort = (VALID_SORTS.has(sortParam) ? sortParam : DEFAULTS.sort) as "latest" | "severity";
-  const pageSizeParam = searchParams.get("pageSize") ?? String(DEFAULTS.pageSize);
-  const pageSize = VALID_PAGE_SIZES.has(pageSizeParam) ? Number(pageSizeParam) : DEFAULTS.pageSize;
-  const page = Math.max(1, Number(searchParams.get("page")) || DEFAULTS.page);
-  const defaultRange = initDateRange();
-  const from = searchParams.get("from") ?? defaultRange.from;
-  const to = searchParams.get("to") ?? defaultRange.to;
-  const search = searchParams.get("search") ?? DEFAULTS.search;
-
-  const setPage = (p: number) => updateFilters(setSearchParams, { page: p });
+  const {
+    filter, sort, pageSize, page, from, to, search,
+    setFilter, setSort, setPageSize, setPage, setFrom, setTo, setSearch, resetFilters,
+  } = useReportsFilter();
 
   useEffect(() => {
     let ignore = false;
@@ -103,8 +42,6 @@ export default function Reports() {
 
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
 
-  const resetFilters = () => setSearchParams({});
-
   return (
     <div className="screen reports-page">
       <div className="reports-page__title">리포트 목록</div>
@@ -116,7 +53,7 @@ export default function Reports() {
           value={filter}
           onChange={(e) => {
             const v = e.target.value;
-            if (VALID_FILTERS.has(v)) handleSeverityFilter(v as "all" | Severity, (u) => updateFilters(setSearchParams, u));
+            if (VALID_FILTERS.has(v)) handleSeverityFilter(v as "all" | Severity, setFilter, setPage);
           }}
           className="reports-ctrl"
         >
@@ -129,7 +66,7 @@ export default function Reports() {
           type="date"
           aria-label="시작 날짜"
           value={from}
-          onChange={(e) => updateFilters(setSearchParams, { from: e.target.value, page: 1 })}
+          onChange={(e) => { setFrom(e.target.value); setPage(1); }}
           className="reports-ctrl"
         />
         <span className="reports-range-sep">~</span>
@@ -137,7 +74,7 @@ export default function Reports() {
           type="date"
           aria-label="종료 날짜"
           value={to}
-          onChange={(e) => updateFilters(setSearchParams, { to: e.target.value, page: 1 })}
+          onChange={(e) => { setTo(e.target.value); setPage(1); }}
           className="reports-ctrl"
         />
         <input
@@ -145,7 +82,7 @@ export default function Reports() {
           placeholder="서비스명·요약 검색..."
           aria-label="서비스명 또는 요약 검색"
           value={search}
-          onChange={(e) => handleSearch(e.target.value, (u) => updateFilters(setSearchParams, u))}
+          onChange={(e) => handleSearch(e.target.value, setSearch, setPage)}
           className="reports-search"
         />
         <select
@@ -153,7 +90,7 @@ export default function Reports() {
           value={sort}
           onChange={(e) => {
             const v = e.target.value;
-            if (VALID_SORTS.has(v)) handleSort(v as "latest" | "severity", (u) => updateFilters(setSearchParams, u));
+            if (VALID_SORTS.has(v)) handleSort(v as "latest" | "severity", setSort, setPage);
           }}
           className="reports-ctrl"
         >
@@ -165,7 +102,7 @@ export default function Reports() {
           value={String(pageSize)}
           onChange={(e) => {
             const v = e.target.value;
-            if (VALID_PAGE_SIZES.has(v)) updateFilters(setSearchParams, { pageSize: Number(v), page: 1 });
+            if (VALID_PAGE_SIZES.has(v)) { setPageSize(Number(v)); setPage(1); }
           }}
           className="reports-ctrl"
         >

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Login from "./pages/Login";
 import RequireAuth from "./components/layout/RequireAuth";
 import AppShell from "./components/layout/AppShell";
@@ -6,6 +6,7 @@ import Dashboard from "./pages/Dashboard";
 import Reports from "./pages/Reports";
 import ReportDetail from "./pages/ReportDetail";
 import NotFound from "./pages/NotFound";
+import { ReportsFilterProvider } from "./context/ReportsFilterContext";
 
 export default function App() {
   return (
@@ -18,8 +19,11 @@ export default function App() {
         {/* /app 정확히 매치 시(하위 경로 없이) 대시보드로 보정 */}
         <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
-        <Route path="reports" element={<Reports />} />
-        <Route path="reports/:id" element={<ReportDetail />} />
+        {/* 목록<->상세 이동에도 필터 유지되도록 두 라우트를 ReportsFilterProvider로 묶는다 */}
+        <Route element={<ReportsFilterProvider><Outlet /></ReportsFilterProvider>}>
+          <Route path="reports" element={<Reports />} />
+          <Route path="reports/:id" element={<ReportDetail />} />
+        </Route>
         {/* /app 하위 미정의 경로는 전부 여기로: 인증된 사용자는 사이드바 있는 셸 안에서 404를 본다 */}
         <Route path="*" element={<NotFound />} />
       </Route>

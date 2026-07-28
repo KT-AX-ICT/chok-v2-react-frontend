@@ -70,8 +70,7 @@ export default function ReportDetail() {
     <div className="screen detail-page">
       {/* 브레드크럼 */}
       <div className="detail-breadcrumb">
-        {/* nav(-1): 목록의 필터 쿼리스트링 유지 */}
-        <button type="button" className="detail-breadcrumb__link" onClick={() => nav(-1)}>리포트 목록</button>
+        <button type="button" className="detail-breadcrumb__link" onClick={() => nav("/app/reports")}>리포트 목록</button>
         <span className="detail-breadcrumb__sep">&gt;</span>
         <span className="detail-breadcrumb__current">상세</span>
       </div>

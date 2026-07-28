@@ -1,24 +1,30 @@
 import type { Severity } from "../types/report";
 
-/* ── Reports 페이지 ── setSearchParams 중복 호출 시 덮어써지는 문제 방지 위해 값+page를 한 번에 전달 */
+/* ── Reports 페이지 ── */
 
 export function handleSeverityFilter(
   value: "all" | Severity,
-  update: (u: { filter: "all" | Severity; page: number }) => void,
+  setFilter: (v: "all" | Severity) => void,
+  setPage: (p: number) => void,
 ) {
-  update({ filter: value, page: 1 });
+  setFilter(value);
+  setPage(1);
 }
 
 export function handleSearch(
   value: string,
-  update: (u: { search: string; page: number }) => void,
+  setSearch: (v: string) => void,
+  setPage: (p: number) => void,
 ) {
-  update({ search: value, page: 1 });
+  setSearch(value);
+  setPage(1);
 }
 
 export function handleSort(
   value: "latest" | "severity",
-  update: (u: { sort: "latest" | "severity"; page: number }) => void,
+  setSort: (v: "latest" | "severity") => void,
+  setPage: (p: number) => void,
 ) {
-  update({ sort: value, page: 1 });
+  setSort(value);
+  setPage(1);
 }
