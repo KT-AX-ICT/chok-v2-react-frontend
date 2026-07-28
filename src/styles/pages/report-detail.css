@@ -309,6 +309,16 @@
   background: var(--chip-amber);
   color: var(--warn-text2);
 }
+.detail-snapshot--clickable {
+  cursor: pointer;
+}
+.detail-snapshot--clickable:hover {
+  outline: 1.5px solid var(--border2);
+}
+.detail-snapshot--expanded {
+  max-height: 70vh;
+  font-size: 13px;
+}
 
 /* ── 영향 탭 ── */
 .detail-impact-metrics {

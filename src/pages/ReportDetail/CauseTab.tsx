@@ -1,6 +1,7 @@
 import type { AgentTab, EvidenceData } from "../../types/reportDetail";
 import SectionHeader from "../../components/ui/SectionHeader";
 import SentenceBlock from "../../components/ui/SentenceBlock";
+import ExpandableBox from "../../components/ui/ExpandableBox";
 
 const AGENT_LABELS: Record<AgentTab, string> = {
   log:    "Log Agent",
@@ -59,8 +60,7 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
               <SentenceBlock text={evidence.log.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
-          <div className="detail-snapshot-label">로그</div>
-          <div className="detail-snapshot">
+          <ExpandableBox label="로그">
             {evidence.log.lines.map((line, i) => (
               <div key={i} className={LOG_LEVEL_CLASS[line.level] ?? "detail-snapshot__line"}>
                 <span style={{ opacity: 0.55 }}>{line.timestamp}</span>{"  "}
@@ -68,7 +68,7 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
                 {line.msg}
               </div>
             ))}
-          </div>
+          </ExpandableBox>
         </>
       )}
 
@@ -84,8 +84,7 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
               <SentenceBlock text={evidence.trace.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
-          <div className="detail-snapshot-label">트레이스</div>
-          <div className="detail-snapshot">
+          <ExpandableBox label="트레이스">
             {evidence.trace.spans.map((span, i) => (
               <div key={i} className={SPAN_STATUS_CLASS[span.status] ?? "detail-snapshot__line"}>
                 <span style={{ opacity: 0.5 }}>{span.traceId}</span>{"  "}
@@ -94,7 +93,7 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
                 <span style={{ fontWeight: 700 }}>{span.status.toUpperCase()}</span>
               </div>
             ))}
-          </div>
+          </ExpandableBox>
         </>
       )}
 
@@ -110,14 +109,13 @@ export default function CauseTab({ agentTab, evidence, onAgentTabChange }: Props
               <SentenceBlock text={evidence.metric.conclusion} className="detail-cause-item__value detail-cause-item__value--conclusion" />
             </div>
           </div>
-          <div className="detail-snapshot-label">스냅샷</div>
-          <div className="detail-snapshot">
+          <ExpandableBox label="스냅샷">
             {evidence.metric.items.map((item, i) => (
               <div key={i} className={item.exceeded ? "detail-snapshot__line detail-snapshot__line--warn" : "detail-snapshot__line"}>
                 {item.label}: {item.value}{item.threshold ? ` (임계치 ${item.threshold})` : ""}
               </div>
             ))}
-          </div>
+          </ExpandableBox>
         </>
       )}
     </div>
