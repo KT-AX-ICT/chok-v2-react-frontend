@@ -170,4 +170,10 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  cursor: pointer;
+}
+.reports-td--summary--expanded {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }

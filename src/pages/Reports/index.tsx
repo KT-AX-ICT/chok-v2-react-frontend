@@ -16,6 +16,7 @@ export default function Reports() {
   const [items, setItems] = useState<Report[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const {
     filter, sort, pageSize, page, from, to, search,
     setFilter, setSort, setPageSize, setPage, setFrom, setTo, setSearch, resetFilters,
@@ -151,7 +152,12 @@ export default function Reports() {
                   <td className="reports-td reports-td--type" title={r.type}>{r.type}</td>
                   <td className="reports-td reports-td--service" title={r.service}>{r.service}</td>
                   <td className="reports-td reports-td--time">{r.time}</td>
-                  <td className="reports-td reports-td--summary">{r.summary}</td>
+                  <td
+                    className={`reports-td reports-td--summary${expandedId === r.id ? " reports-td--summary--expanded" : ""}`}
+                    onClick={() => setExpandedId(expandedId === r.id ? null : r.id)}
+                  >
+                    {r.summary}
+                  </td>
                   <td className="reports-td reports-td--action">
                     <button
                       onClick={() => nav(`/app/reports/${r.id}`)}
