@@ -9,7 +9,7 @@ import "../../styles/pages/reports.css";
 
 const VALID_FILTERS = new Set(["all", "HIGH", "MID", "LOW"]);
 const VALID_SORTS = new Set(["latest", "severity"]);
-const VALID_PAGE_SIZES = new Set(["5", "10", "20"]);
+const VALID_PAGE_SIZES = new Set(["5", "10", "20", "50"]);
 
 export default function Reports() {
   const nav = useNavigate();
@@ -109,6 +109,7 @@ export default function Reports() {
           <option value="5">5개</option>
           <option value="10">10개</option>
           <option value="20">20개</option>
+          <option value="50">50개</option>
         </select>
         <button onClick={resetFilters} className="reports-reset-btn">초기화</button>
       </div>
