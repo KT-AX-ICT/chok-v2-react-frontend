@@ -5,7 +5,7 @@ import { toLocalDateStr } from "../utils/dateUtils";
 const DEFAULTS = {
   filter: "all" as "all" | Severity,
   sort: "latest" as "latest" | "severity",
-  pageSize: 10,
+  pageSize: 50,
   page: 1,
   search: "",
 };
